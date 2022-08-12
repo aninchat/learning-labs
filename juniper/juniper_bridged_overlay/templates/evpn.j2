@@ -1,4 +1,6 @@
 {% for vlan in vlans -%}
+set vlans {{ vlans[vlan].name }} vlan-id {{ vlan }}
+set vlans {{ vlans[vlan].name }} vxlan vni {{ vlans[vlan].vni }}
 set protocols evpn vni-options vni {{ vlans[vlan].vni }} vrf-target target:{{ vlans[vlan].rt }}
 set protocols evpn extended-vni-list {{ vlans[vlan].vni }}
 {% endfor -%}

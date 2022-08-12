@@ -10,6 +10,8 @@ set protocols bgp group underlay neighbor {{ neighbor }} peer-as {{ bgp.neighbor
 set protocols bgp group overlay type external
 {% if role == 'spine' -%}
 set protocols bgp group overlay multihop no-nexthop-change
+{% else -%}
+set protocols bgp group overlay multihop
 {% endif -%}
 set protocols bgp group overlay local-address {{ bgp.router_id }}
 set protocols bgp group overlay multipath

@@ -12,11 +12,11 @@
     - name: configuring BGP on devices
       cli_config:
         config: "{{ lookup('template', 'templates/bgp.j2') }}"
-    - name: configuring VLANs on leafs
-      when: inventory_hostname in groups["leafs"]
-      cli_config:
-        config: "{{ lookup('template', 'templates/vlan_creation.j2') }}"
-    - name: configuring EVPN services on leafs
+    - name: configuring VLANs and EVPN services on leafs
       when: inventory_hostname in groups["leafs"]
       cli_config:
         config: "{{ lookup('template', 'templates/evpn.j2') }}"
+    - name: mapping VLANs to host facing interfaces
+      when: inventory_hostname in groups["leafs"]
+      cli_config:
+        config: "{{ lookup('template', 'templates/vlan_mapping.j2') }}"
