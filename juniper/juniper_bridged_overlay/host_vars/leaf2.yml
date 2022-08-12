@@ -19,7 +19,7 @@ bgp:
                         loopback: '192.168.100.2'
 switch_options:
         rd: '192.168.10.2:65422'
-        vrf_target: '200:200'
+        vrf_target: '65422:1'
         vtep_source: 'lo0.0'
 vlans:
         100:

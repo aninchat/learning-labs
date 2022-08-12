@@ -17,5 +17,7 @@ bgp:
                 10.10.0.6:
                         remote_as: 65422
                         loopback: '192.168.10.2'
-rd: '192.168.100.2:65500'
-vni_source: 'lo0.0'
+switch_options:
+        rd: '192.168.100.2:65500'
+        vrf_target: '65500:1'
+        vtep_source: 'lo0.0'
