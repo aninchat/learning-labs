@@ -1,0 +1,21 @@
+---
+role: 'spine'
+interfaces:
+        lo0:
+                address: '192.168.100.1/32'
+        xe-0/0/0:
+                address: '10.10.0.1/31'
+        xe-0/0/1:
+                address: '10.10.0.5/31'
+bgp:
+        as_number: 65500
+        router_id: '192.168.100.1'
+        neighbors:
+                10.10.0.0:
+                        remote_as: 65421
+                        loopback: '192.168.10.1'
+                10.10.0.4:
+                        remote_as: 65422
+                        loopback: '192.168.10.2'
+rd: '192.168.100.1:65500'
+vni_source: 'lo0.0'

@@ -1,0 +1,36 @@
+---
+role: 'leaf'
+interfaces:
+        lo0:
+                address: '192.168.10.2/32'
+        xe-0/0/0:
+                address: '10.10.0.4/31'
+        xe-0/0/1:
+                address: '10.10.0.6/31'
+bgp:
+        as_number: 65422
+        router_id: '192.168.10.2'
+        neighbors:
+                10.10.0.5:
+                        remote_as: 65500
+                        loopback: '192.168.100.1'
+                10.10.0.7:
+                        remote_as: 65500
+                        loopback: '192.168.100.2'
+switch_options:
+        rd: '192.168.10.2:65422'
+        vrf_target: '200:200'
+        vtep_source: 'lo0.0'
+vlans:
+        100:
+                vni: 10100
+                name: 'VLAN100'
+                rt: '100:100'
+                interfaces:
+                        - 'xe-0/0/2' 
+        200:
+                vni: 10200
+                name: 'VLAN200'
+                rt: '200:200'
+                interfaces:
+                        - 'xe-0/0/3'

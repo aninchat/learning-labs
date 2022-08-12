@@ -1,0 +1,20 @@
+---
+
+all:
+        children:
+                leafs:
+                        hosts:
+                                leaf1:
+                                        ansible_host: 172.20.20.11
+                                leaf2:
+                                        ansible_host: 172.20.20.12
+                spines:
+                        hosts:
+                                spine1:
+                                        ansible_host: 172.20.20.101
+                                spine2:
+                                        ansible_host: 172.20.20.102
+                junos:
+                        hosts:
+                                leaf1:
+                                leaf2:

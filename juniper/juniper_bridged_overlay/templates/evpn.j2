@@ -1,0 +1,10 @@
+{% for vlan in vlans -%}
+set protocols evpn vni-options vni {{ vlans[vlan].vni }} vrf-target target:{{ vlans[vlan].rt }}
+set protocols evpn extended-vni-list {{ vlans[vlan].vni }}
+{% endfor -%}
+set protocols evpn encapsulation vxlan
+set protocols evpn multicast-mode ingress-replication
+set switch-options vtep-source-interface {{ switch_options.vtep_source }}
+set switch-options route-distinguisher {{ switch_options.rd }}
+set switch-options vrf-target target:{{ switch_options.vrf_target }}
+set switch-options vrf-target auto
