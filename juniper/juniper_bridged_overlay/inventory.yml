@@ -14,7 +14,3 @@ all:
                                         ansible_host: 172.20.20.101
                                 spine2:
                                         ansible_host: 172.20.20.102
-                junos:
-                        hosts:
-                                leaf1:
-                                leaf2:

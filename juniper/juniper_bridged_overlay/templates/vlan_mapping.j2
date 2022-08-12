@@ -1,7 +1,3 @@
-set protocol lldp interface all
-{% for interface in interfaces -%}
-set interface {{ interface }} unit 0 family inet address {{ interfaces[interface].address }}
-{% endfor -%}
 {% for vlan in vlans -%}
 {% for interface in vlans[vlan].interfaces -%}
 set interfaces {{ interface }} unit 0 family ethernet-switching interface-mode access

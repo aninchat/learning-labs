@@ -3,9 +3,9 @@
 - name: Automated deployment of a 3-stage two leaf, two spine Juniper bridged overlay
   hosts: all
   tasks:
-    - name: configuring interfaces on devices
+    - name: configuring p2p fabric interfaces
       cli_config:
-        config: "{{ lookup('template', 'templates/interface_creation.j2') }}"
+        config: "{{ lookup('template', 'templates/p2p_fabric_interface_creation.j2') }}"
     - name: configuring policies on devices
       cli_config:
         config: "{{ lookup('template', 'templates/policy.j2') }}"
