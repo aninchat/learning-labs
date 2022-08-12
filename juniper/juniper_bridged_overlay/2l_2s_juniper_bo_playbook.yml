@@ -1,0 +1,22 @@
+---
+
+- name: Automated deployment of a 3-stage two leaf, two spine Juniper bridged overlay
+  hosts: all
+  tasks:
+    - name: configuring interfaces on devices
+      cli_config:
+        config: "{{ lookup('template', 'templates/interface_creation.j2') }}"
+    - name: configuring policies on devices
+      cli_config:
+        config: "{{ lookup('template', 'templates/policy.j2') }}"
+    - name: configuring BGP on devices
+      cli_config:
+        config: "{{ lookup('template', 'templates/bgp.j2') }}"
+    - name: configuring VLANs on leafs
+      when: inventory_hostname in groups["leafs"]
+      cli_config:
+        config: "{{ lookup('template', 'templates/vlan_creation.j2') }}"
+    - name: configuring EVPN services on leafs
+      when: inventory_hostname in groups["leafs"]
+      cli_config:
+        config: "{{ lookup('template', 'templates/evpn.j2') }}"
