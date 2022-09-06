@@ -1,0 +1,22 @@
+all:
+  children:
+    linux:
+      hosts:
+        clab-2l_2s_crb-h1:
+          ansible_host: 10.10.121.54
+        clab-2l_2s_crb-h2:
+          ansible_host: 10.10.121.55
+        clab-2l_2s_crb-h3:
+          ansible_host: 10.10.121.56
+        clab-2l_2s_crb-h4:
+          ansible_host: 10.10.121.57
+    vr-vqfx:
+      hosts:
+        clab-2l_2s_crb-leaf1:
+          ansible_host: 10.10.121.52
+        clab-2l_2s_crb-leaf2:
+          ansible_host: 10.10.121.53
+        clab-2l_2s_crb-spine1:
+          ansible_host: 10.10.121.50
+        clab-2l_2s_crb-spine2:
+          ansible_host: 10.10.121.51

@@ -1,0 +1,6 @@
+{% for vlan in vlans -%}
+{% for interface in vlans[vlan].interfaces -%}
+set interfaces {{ interface }} unit 0 family ethernet-switching interface-mode access
+set interfaces {{ interface }} unit 0 family ethernet-switching vlan members {{ vlans[vlan].name }}
+{% endfor -%}
+{% endfor -%}

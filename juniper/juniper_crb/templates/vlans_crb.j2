@@ -1,0 +1,6 @@
+{% if crb_enabled == 'true' -%}
+{% for vlan in vlans -%}
+set vlan {{ vlans[vlan].name }} vlan-id {{vlan}}
+set vlans {{ vlans[vlan].name }} l3-interface {{ vlans[vlan].l3_interface}}  
+{% endfor -%}
+{% endif -%}

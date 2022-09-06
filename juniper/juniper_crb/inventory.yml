@@ -1,0 +1,20 @@
+---
+
+all:
+  children:
+    leafs:
+      hosts:
+        leaf1:
+          ansible_host: 10.10.121.52
+        leaf2:
+          ansible_host: 10.10.121.53
+    spines:
+      hosts:
+        spine1:
+          ansible_host: 10.10.121.50
+        spine2:
+          ansible_host: 10.10.121.51
+    crb:
+      hosts:
+        spine1:
+        spine2:

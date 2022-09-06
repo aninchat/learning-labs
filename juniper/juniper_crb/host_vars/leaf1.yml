@@ -1,0 +1,46 @@
+---
+crb_enabled: 'false'
+role: 'leaf'
+interfaces:
+        lo0:
+                address: '192.168.10.1/32'
+        xe-0/0/0:
+                address: '10.10.0.0/31'
+        xe-0/0/1:
+                address: '10.10.0.2/31'
+bgp:
+        as_number: 65421
+        router_id: '192.168.10.1'
+        neighbors:
+                10.10.0.1:
+                        remote_as: 65500
+                        loopback: '192.168.100.1'
+                10.10.0.3:
+                        remote_as: 65500
+                        loopback: '192.168.100.2'
+switch_options:
+        rd: '192.168.10.1:65421'
+        vrf_target: '100:100'
+        vtep_source: 'lo0.0'
+communities:
+        dc1_type1:
+                - 'target:65500:1'
+policies:
+        policy_statements:
+                DC1_Import:
+                        terms:
+                                dc1_type1_evpn:
+                                        community: 'dc1_type1'
+vlans:
+        100:
+                vni: 10100
+                name: 'VLAN100'
+                rt: '100:100'
+                interfaces:
+                        - 'xe-0/0/2' 
+        200:
+                vni: 10200
+                name: 'VLAN200'
+                rt: '200:200'
+                interfaces:
+                        - 'xe-0/0/3'
