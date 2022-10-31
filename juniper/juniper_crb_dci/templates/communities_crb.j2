@@ -1,0 +1,5 @@
+{% for comm_name, comm_members in communities.items() -%}
+{% for member in comm_members -%}
+set policy-options community {{comm_name}} members {{ member }}
+{% endfor -%}
+{% endfor -%}

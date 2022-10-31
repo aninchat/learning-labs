@@ -1,4 +1,4 @@
-name: 2l_2s_bo
+name: 3l_2s_esi
 mgmt:
   bridge: mgmtbridge
   ipv4_subnet: 10.10.121.0/24
@@ -6,50 +6,51 @@ topology:
   nodes:
     spine1:
             kind: vr-vqfx
-            image: vrnetlab/vr-vqfx:19.4R1.10
-            mgmt_ipv4: 10.10.121.50
+            image: vrnetlab/vr-vqfx:21.4R1.12
+            mgmt_ipv4: 10.10.121.70
     spine2:
             kind: vr-vqfx
-            image: vrnetlab/vr-vqfx:19.4R1.10
-            mgmt_ipv4: 10.10.121.51
+            image: vrnetlab/vr-vqfx:21.4R1.12
+            mgmt_ipv4: 10.10.121.71
     leaf1:
             kind: vr-vqfx
-            image: vrnetlab/vr-vqfx:19.4R1.10
-            mgmt_ipv4: 10.10.121.52
+            image: vrnetlab/vr-vqfx:21.4R1.12
+            mgmt_ipv4: 10.10.121.72
     leaf2:
             kind: vr-vqfx
-            image: vrnetlab/vr-vqfx:19.4R1.10
-            mgmt_ipv4: 10.10.121.53
+            image: vrnetlab/vr-vqfx:21.4R1.12
+            mgmt_ipv4: 10.10.121.73
+    leaf3:
+            kind: vr-vqfx
+            image: vrnetlab/vr-vqfx:21.4R1.12
+            mgmt_ipv4: 10.10.121.74
     h1:
             kind: linux
             image: networkop/host:ifreload
             binds:
                     - hosts/h1_interfaces:/etc/network/interfaces
-            mgmt_ipv4: 10.10.121.54
+            mgmt_ipv4: 10.10.121.75
     h2:
             kind: linux
             image: networkop/host:ifreload
             binds:
                     - hosts/h2_interfaces:/etc/network/interfaces
-            mgmt_ipv4: 10.10.121.55
+            mgmt_ipv4: 10.10.121.76
     h3:
             kind: linux
             image: networkop/host:ifreload
             binds:
                     - hosts/h3_interfaces:/etc/network/interfaces
-            mgmt_ipv4: 10.10.121.56
-    h4:
-            kind: linux
-            image: networkop/host:ifreload
-            binds:
-                    - hosts/h4_interfaces:/etc/network/interfaces
-            mgmt_ipv4: 10.10.121.57
+            mgmt_ipv4: 10.10.121.77
   links:
           - endpoints: ["leaf1:eth1", "spine1:eth1"]
           - endpoints: ["leaf1:eth2", "spine2:eth1"]
           - endpoints: ["leaf2:eth1", "spine1:eth2"]
           - endpoints: ["leaf2:eth2", "spine2:eth2"]
+          - endpoints: ["leaf3:eth1", "spine1:eth3"]
+          - endpoints: ["leaf3:eth2", "spine2:eth3"]
           - endpoints: ["leaf1:eth3", "h1:eth1"]
-          - endpoints: ["leaf1:eth4", "h2:eth1"]
-          - endpoints: ["leaf2:eth3", "h3:eth1"]
-          - endpoints: ["leaf2:eth4", "h4:eth1"]
+          - endpoints: ["leaf2:eth3", "h1:eth2"]
+          - endpoints: ["leaf2:eth4", "h2:eth1"]
+          - endpoints: ["leaf3:eth3", "h3:eth1"]
+

@@ -1,0 +1,6 @@
+{% if crb_enabled == 'true' -%}
+{%  for vlan in irb -%}
+ set interfaces irb unit {{ vlan }} family inet address {{irb[vlan].v4_address}} virtual-gateway-address {{irb[vlan].v4_vga}}
+ set interfaces irb unit {{ vlan }} virtual-gateway-accept-data  
+{%  endfor -%}
+{% endif -%}

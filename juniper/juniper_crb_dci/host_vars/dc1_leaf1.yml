@@ -1,4 +1,6 @@
 ---
+location: "dc1"
+crb_enabled: 'false'
 role: 'leaf'
 interfaces:
         lo0:
@@ -21,6 +23,19 @@ switch_options:
         rd: '192.168.10.1:65421'
         vrf_target: '65421:1'
         vtep_source: 'lo0.0'
+communities:
+        dc1_type1:
+                - 'target:65500:1'
+        dc2_type1:
+                - 'target:65501:1'
+policies:
+        policy_statements:
+                DC1_Import:
+                        terms:
+                                dc1_type1_evpn:
+                                        community: 'dc1_type1'
+                                dc2_type1_evpn:
+                                        community: 'dc2_type1'
 vlans:
         100:
                 vni: 10100

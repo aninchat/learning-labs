@@ -1,0 +1,5 @@
+set policy-options policy-statement ECMP then load-balance per-packet
+set policy-options policy-statement ALLOW_LOOPBACK from interface lo0.0
+set policy-options policy-statement ALLOW_LOOPBACK from route-filter {{ interfaces.lo0.address}} exact
+set policy-options policy-statement ALLOW_LOOPBACK then accept
+set routing-options forwarding-table export ECMP 

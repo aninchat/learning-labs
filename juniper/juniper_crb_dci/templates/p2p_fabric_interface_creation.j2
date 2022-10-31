@@ -1,0 +1,4 @@
+set protocol lldp interface all
+{% for interface in interfaces -%}
+set interface {{ interface }} unit 0 family inet address {{ interfaces[interface].address }}
+{% endfor -%}

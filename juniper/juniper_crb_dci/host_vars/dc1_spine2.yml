@@ -1,0 +1,48 @@
+---
+location: "dc1"
+crb_enabled: 'true'
+role: 'spine'
+interfaces:
+        lo0:
+                address: '192.168.100.2/32'
+        xe-0/0/0:
+                address: '10.10.0.3/31'
+        xe-0/0/1:
+                address: '10.10.0.7/31'
+        xe-0/0/4:
+                address: '10.10.0.23/31'
+bgp:
+        as_number: 65500
+        router_id: '192.168.100.2'
+        neighbors:
+                10.10.0.2:
+                        remote_as: 65421
+                        loopback: '192.168.10.1'
+                10.10.0.6:
+                        remote_as: 65422
+                        loopback: '192.168.10.2'
+                10.10.0.22:
+                        remote_as: 65501
+                        loopback: '192.168.100.3'
+switch_options:
+        rd: '192.168.100.2:65500'
+        vrf_target: '65500:1'
+        vtep_source: 'lo0.0'
+vlans:
+        100:
+                vni: 10100
+                name: 'VLAN100'
+                rt: '100:100'
+                l3_interface: 'irb.100'
+        200:
+                vni: 10200
+                name: 'VLAN200'
+                rt: '200:200'
+                l3_interface: 'irb.200'
+irb:
+        100:
+                v4_address: '10.100.100.251/24'
+                v4_vga: '10.100.100.254'
+        200:
+                v4_address: '10.100.200.251/24'
+                v4_vga: '10.100.200.254'

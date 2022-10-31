@@ -1,0 +1,43 @@
+---
+role: 'leaf'
+interfaces:
+        lo0:
+                address: '192.168.10.3/32'
+        xe-0/0/0:
+                address: '10.10.0.8/31'
+        xe-0/0/1:
+                address: '10.10.0.10/31'
+bgp:
+        as_number: 65423
+        router_id: '192.168.10.3'
+        neighbors:
+                10.10.0.9:
+                        remote_as: 65500
+                        loopback: '192.168.100.1'
+                10.10.0.11:
+                        remote_as: 65500
+                        loopback: '192.168.100.2'
+communities:
+        leaf1-type1:
+                - 'target:65421:1'
+        leaf2-type1:
+                - 'target:65422:1'
+policies:
+        policy_statements:
+                Leaf3_Import:
+                        terms:
+                                leaf1_type1:
+                                        community: 'leaf1-type1'
+                                leaf2_type1:
+                                        community: 'leaf2-type1'
+switch_options:
+        rd: '192.168.10.3:65423'
+        vrf_target: '65423:1'
+        vtep_source: 'lo0.0'
+vlans:
+        100:
+                vni: 10100
+                name: 'VLAN100'
+                rt: '100:100'
+                interfaces:
+                        - 'xe-0/0/2' 

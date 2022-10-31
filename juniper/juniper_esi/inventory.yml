@@ -1,0 +1,22 @@
+---
+
+all:
+  children:
+    leafs:
+      hosts:
+        leaf1:
+          ansible_host: 10.10.121.72
+        leaf2:
+          ansible_host: 10.10.121.73
+        leaf3:
+          ansible_host: 10.10.121.74
+    spines:
+      hosts:
+        spine1:
+          ansible_host: 10.10.121.70
+        spine2:
+          ansible_host: 10.10.121.71
+    esi:
+      hosts:
+        leaf1:
+        leaf2:

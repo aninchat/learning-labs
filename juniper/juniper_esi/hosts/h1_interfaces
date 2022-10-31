@@ -1,0 +1,20 @@
+auto lo
+iface lo inet loopback
+
+auto eth1
+iface eth1 inet static
+
+auto eth2
+iface eth1 inet static
+
+auto bond
+iface bond inet static
+  address 10.100.100.1
+  netmask 255.255.255.0
+  mtu 9000
+  bond-slaves eth1 eth2
+  bond-mode 802.3ad
+  bond-miimon 100
+  bond-lacp-rate 1
+  bond-min-links 1
+  bond-xmit-hash-policy layer3+4

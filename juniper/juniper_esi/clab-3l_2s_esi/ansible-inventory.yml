@@ -1,0 +1,22 @@
+all:
+  children:
+    linux:
+      hosts:
+        clab-3l_2s_esi-h1:
+          ansible_host: 10.10.121.75
+        clab-3l_2s_esi-h2:
+          ansible_host: 10.10.121.76
+        clab-3l_2s_esi-h3:
+          ansible_host: 10.10.121.77
+    vr-vqfx:
+      hosts:
+        clab-3l_2s_esi-leaf1:
+          ansible_host: 10.10.121.72
+        clab-3l_2s_esi-leaf2:
+          ansible_host: 10.10.121.73
+        clab-3l_2s_esi-leaf3:
+          ansible_host: 10.10.121.74
+        clab-3l_2s_esi-spine1:
+          ansible_host: 10.10.121.70
+        clab-3l_2s_esi-spine2:
+          ansible_host: 10.10.121.71

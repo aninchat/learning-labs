@@ -1,5 +1,6 @@
 ---
 role: 'leaf'
+ae_number: 5
 interfaces:
         lo0:
                 address: '192.168.10.2/32'
@@ -17,6 +18,21 @@ bgp:
                 10.10.0.7:
                         remote_as: 65500
                         loopback: '192.168.100.2'
+esi:
+        ae0:
+                interfaces:
+                        - 'xe-0/0/2'
+                system_id: '00:00:00:00:00:11'
+                esi_id: 'auto'
+communities:
+        leaf1-type1:
+                - 'target:65421:1'
+policies:
+        policy_statements:
+                Leaf2_Import:
+                        terms:
+                                leaf1_type1:
+                                        community: 'leaf1-type1'
 switch_options:
         rd: '192.168.10.2:65422'
         vrf_target: '65422:1'
@@ -24,13 +40,7 @@ switch_options:
 vlans:
         100:
                 vni: 10100
-                name: 'VLAN100'
+                name: 'v10'
                 rt: '100:100'
                 interfaces:
-                        - 'xe-0/0/2' 
-        200:
-                vni: 10200
-                name: 'VLAN200'
-                rt: '200:200'
-                interfaces:
-                        - 'xe-0/0/3'
+                        - 'ae0' 

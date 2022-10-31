@@ -1,0 +1,528 @@
+{
+  "name": "2l_2s_crb_dci",
+  "type": "clab",
+  "clab": {
+    "config": {
+      "prefix": "clab",
+      "mgmt": {
+        "network": "clab",
+        "bridge": "mgmtbridge",
+        "ipv4-subnet": "10.10.121.0/24",
+        "ipv4-gw": "10.10.121.4",
+        "ipv6-gw": "fe80::f407:5aff:fe72:cc79",
+        "mtu": "1500",
+        "external-access": true
+      }
+    }
+  },
+  "nodes": {
+    "dc1_leaf1": {
+      "index": "0",
+      "shortname": "dc1_leaf1",
+      "longname": "clab-2l_2s_crb_dci-dc1_leaf1",
+      "fqdn": "dc1_leaf1.2l_2s_crb_dci.io",
+      "group": "",
+      "labdir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/dc1_leaf1",
+      "kind": "vr-vqfx",
+      "image": "vrnetlab/vr-vqfx:21.4R1.12",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "10.10.121.62",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "mgmtbridge",
+        "clab-node-group": "",
+        "clab-node-kind": "vr-vqfx",
+        "clab-node-lab-dir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/dc1_leaf1",
+        "clab-node-name": "dc1_leaf1",
+        "clab-node-type": "",
+        "clab-topo-file": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/2l_2s_juniper_crb_dci_containerlab.yml",
+        "containerlab": "2l_2s_crb_dci"
+      }
+    },
+    "dc1_leaf2": {
+      "index": "1",
+      "shortname": "dc1_leaf2",
+      "longname": "clab-2l_2s_crb_dci-dc1_leaf2",
+      "fqdn": "dc1_leaf2.2l_2s_crb_dci.io",
+      "group": "",
+      "labdir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/dc1_leaf2",
+      "kind": "vr-vqfx",
+      "image": "vrnetlab/vr-vqfx:21.4R1.12",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "10.10.121.63",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "mgmtbridge",
+        "clab-node-group": "",
+        "clab-node-kind": "vr-vqfx",
+        "clab-node-lab-dir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/dc1_leaf2",
+        "clab-node-name": "dc1_leaf2",
+        "clab-node-type": "",
+        "clab-topo-file": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/2l_2s_juniper_crb_dci_containerlab.yml",
+        "containerlab": "2l_2s_crb_dci"
+      }
+    },
+    "dc1_spine1": {
+      "index": "2",
+      "shortname": "dc1_spine1",
+      "longname": "clab-2l_2s_crb_dci-dc1_spine1",
+      "fqdn": "dc1_spine1.2l_2s_crb_dci.io",
+      "group": "",
+      "labdir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/dc1_spine1",
+      "kind": "vr-vqfx",
+      "image": "vrnetlab/vr-vqfx:21.4R1.12",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "10.10.121.60",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "mgmtbridge",
+        "clab-node-group": "",
+        "clab-node-kind": "vr-vqfx",
+        "clab-node-lab-dir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/dc1_spine1",
+        "clab-node-name": "dc1_spine1",
+        "clab-node-type": "",
+        "clab-topo-file": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/2l_2s_juniper_crb_dci_containerlab.yml",
+        "containerlab": "2l_2s_crb_dci"
+      }
+    },
+    "dc1_spine2": {
+      "index": "3",
+      "shortname": "dc1_spine2",
+      "longname": "clab-2l_2s_crb_dci-dc1_spine2",
+      "fqdn": "dc1_spine2.2l_2s_crb_dci.io",
+      "group": "",
+      "labdir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/dc1_spine2",
+      "kind": "vr-vqfx",
+      "image": "vrnetlab/vr-vqfx:21.4R1.12",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "10.10.121.61",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "mgmtbridge",
+        "clab-node-group": "",
+        "clab-node-kind": "vr-vqfx",
+        "clab-node-lab-dir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/dc1_spine2",
+        "clab-node-name": "dc1_spine2",
+        "clab-node-type": "",
+        "clab-topo-file": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/2l_2s_juniper_crb_dci_containerlab.yml",
+        "containerlab": "2l_2s_crb_dci"
+      }
+    },
+    "dc2_leaf1": {
+      "index": "4",
+      "shortname": "dc2_leaf1",
+      "longname": "clab-2l_2s_crb_dci-dc2_leaf1",
+      "fqdn": "dc2_leaf1.2l_2s_crb_dci.io",
+      "group": "",
+      "labdir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/dc2_leaf1",
+      "kind": "vr-vqfx",
+      "image": "vrnetlab/vr-vqfx:21.4R1.12",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "10.10.121.65",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "mgmtbridge",
+        "clab-node-group": "",
+        "clab-node-kind": "vr-vqfx",
+        "clab-node-lab-dir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/dc2_leaf1",
+        "clab-node-name": "dc2_leaf1",
+        "clab-node-type": "",
+        "clab-topo-file": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/2l_2s_juniper_crb_dci_containerlab.yml",
+        "containerlab": "2l_2s_crb_dci"
+      }
+    },
+    "dc2_spine1": {
+      "index": "5",
+      "shortname": "dc2_spine1",
+      "longname": "clab-2l_2s_crb_dci-dc2_spine1",
+      "fqdn": "dc2_spine1.2l_2s_crb_dci.io",
+      "group": "",
+      "labdir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/dc2_spine1",
+      "kind": "vr-vqfx",
+      "image": "vrnetlab/vr-vqfx:21.4R1.12",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "10.10.121.64",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "mgmtbridge",
+        "clab-node-group": "",
+        "clab-node-kind": "vr-vqfx",
+        "clab-node-lab-dir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/dc2_spine1",
+        "clab-node-name": "dc2_spine1",
+        "clab-node-type": "",
+        "clab-topo-file": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/2l_2s_juniper_crb_dci_containerlab.yml",
+        "containerlab": "2l_2s_crb_dci"
+      }
+    },
+    "h1": {
+      "index": "6",
+      "shortname": "h1",
+      "longname": "clab-2l_2s_crb_dci-h1",
+      "fqdn": "h1.2l_2s_crb_dci.io",
+      "group": "",
+      "labdir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/h1",
+      "kind": "linux",
+      "image": "networkop/host:ifreload",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "10.10.121.66",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "mgmtbridge",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/h1",
+        "clab-node-name": "h1",
+        "clab-node-type": "",
+        "clab-topo-file": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/2l_2s_juniper_crb_dci_containerlab.yml",
+        "containerlab": "2l_2s_crb_dci"
+      }
+    },
+    "h2": {
+      "index": "7",
+      "shortname": "h2",
+      "longname": "clab-2l_2s_crb_dci-h2",
+      "fqdn": "h2.2l_2s_crb_dci.io",
+      "group": "",
+      "labdir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/h2",
+      "kind": "linux",
+      "image": "networkop/host:ifreload",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "10.10.121.67",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "mgmtbridge",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/h2",
+        "clab-node-name": "h2",
+        "clab-node-type": "",
+        "clab-topo-file": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/2l_2s_juniper_crb_dci_containerlab.yml",
+        "containerlab": "2l_2s_crb_dci"
+      }
+    },
+    "h3": {
+      "index": "8",
+      "shortname": "h3",
+      "longname": "clab-2l_2s_crb_dci-h3",
+      "fqdn": "h3.2l_2s_crb_dci.io",
+      "group": "",
+      "labdir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/h3",
+      "kind": "linux",
+      "image": "networkop/host:ifreload",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "10.10.121.68",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "mgmtbridge",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/h3",
+        "clab-node-name": "h3",
+        "clab-node-type": "",
+        "clab-topo-file": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/2l_2s_juniper_crb_dci_containerlab.yml",
+        "containerlab": "2l_2s_crb_dci"
+      }
+    },
+    "h4": {
+      "index": "9",
+      "shortname": "h4",
+      "longname": "clab-2l_2s_crb_dci-h4",
+      "fqdn": "h4.2l_2s_crb_dci.io",
+      "group": "",
+      "labdir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/h4",
+      "kind": "linux",
+      "image": "networkop/host:ifreload",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "10.10.121.69",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "mgmtbridge",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/h4",
+        "clab-node-name": "h4",
+        "clab-node-type": "",
+        "clab-topo-file": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/2l_2s_juniper_crb_dci_containerlab.yml",
+        "containerlab": "2l_2s_crb_dci"
+      }
+    },
+    "h5": {
+      "index": "10",
+      "shortname": "h5",
+      "longname": "clab-2l_2s_crb_dci-h5",
+      "fqdn": "h5.2l_2s_crb_dci.io",
+      "group": "",
+      "labdir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/h5",
+      "kind": "linux",
+      "image": "networkop/host:ifreload",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "10.10.121.70",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "mgmtbridge",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/h5",
+        "clab-node-name": "h5",
+        "clab-node-type": "",
+        "clab-topo-file": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/2l_2s_juniper_crb_dci_containerlab.yml",
+        "containerlab": "2l_2s_crb_dci"
+      }
+    },
+    "h6": {
+      "index": "11",
+      "shortname": "h6",
+      "longname": "clab-2l_2s_crb_dci-h6",
+      "fqdn": "h6.2l_2s_crb_dci.io",
+      "group": "",
+      "labdir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/h6",
+      "kind": "linux",
+      "image": "networkop/host:ifreload",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "10.10.121.71",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "mgmtbridge",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/clab-2l_2s_crb_dci/h6",
+        "clab-node-name": "h6",
+        "clab-node-type": "",
+        "clab-topo-file": "/home/aninchat/learning_labs/juniper/juniper_crb_dci/2l_2s_juniper_crb_dci_containerlab.yml",
+        "containerlab": "2l_2s_crb_dci"
+      }
+    }
+  },
+  "links": [
+    {
+      "a": {
+        "node": "dc1_leaf1",
+        "interface": "eth1",
+        "mac": "aa:c1:ab:3f:14:cc",
+        "peer": "z"
+      },
+      "z": {
+        "node": "dc1_spine1",
+        "interface": "eth1",
+        "mac": "aa:c1:ab:87:de:a1",
+        "peer": "a"
+      }
+    },
+    {
+      "a": {
+        "node": "dc1_leaf1",
+        "interface": "eth2",
+        "mac": "aa:c1:ab:6d:04:59",
+        "peer": "z"
+      },
+      "z": {
+        "node": "dc1_spine2",
+        "interface": "eth1",
+        "mac": "aa:c1:ab:d3:23:2a",
+        "peer": "a"
+      }
+    },
+    {
+      "a": {
+        "node": "dc1_leaf2",
+        "interface": "eth1",
+        "mac": "aa:c1:ab:de:66:f7",
+        "peer": "z"
+      },
+      "z": {
+        "node": "dc1_spine1",
+        "interface": "eth2",
+        "mac": "aa:c1:ab:00:2a:37",
+        "peer": "a"
+      }
+    },
+    {
+      "a": {
+        "node": "dc1_leaf2",
+        "interface": "eth2",
+        "mac": "aa:c1:ab:e9:56:0a",
+        "peer": "z"
+      },
+      "z": {
+        "node": "dc1_spine2",
+        "interface": "eth2",
+        "mac": "aa:c1:ab:cf:15:6e",
+        "peer": "a"
+      }
+    },
+    {
+      "a": {
+        "node": "dc1_leaf1",
+        "interface": "eth3",
+        "mac": "aa:c1:ab:d7:d2:40",
+        "peer": "z"
+      },
+      "z": {
+        "node": "h1",
+        "interface": "eth1",
+        "mac": "aa:c1:ab:f8:12:59",
+        "peer": "a"
+      }
+    },
+    {
+      "a": {
+        "node": "dc1_leaf1",
+        "interface": "eth4",
+        "mac": "aa:c1:ab:e1:c4:21",
+        "peer": "z"
+      },
+      "z": {
+        "node": "h2",
+        "interface": "eth1",
+        "mac": "aa:c1:ab:bf:c4:e7",
+        "peer": "a"
+      }
+    },
+    {
+      "a": {
+        "node": "dc1_leaf2",
+        "interface": "eth3",
+        "mac": "aa:c1:ab:db:e5:e4",
+        "peer": "z"
+      },
+      "z": {
+        "node": "h3",
+        "interface": "eth1",
+        "mac": "aa:c1:ab:c5:62:af",
+        "peer": "a"
+      }
+    },
+    {
+      "a": {
+        "node": "dc1_leaf2",
+        "interface": "eth4",
+        "mac": "aa:c1:ab:a9:61:f0",
+        "peer": "z"
+      },
+      "z": {
+        "node": "h4",
+        "interface": "eth1",
+        "mac": "aa:c1:ab:da:a9:7b",
+        "peer": "a"
+      }
+    },
+    {
+      "a": {
+        "node": "dc2_spine1",
+        "interface": "eth5",
+        "mac": "aa:c1:ab:88:7b:9f",
+        "peer": "z"
+      },
+      "z": {
+        "node": "dc1_spine1",
+        "interface": "eth5",
+        "mac": "aa:c1:ab:d4:42:46",
+        "peer": "a"
+      }
+    },
+    {
+      "a": {
+        "node": "dc2_spine1",
+        "interface": "eth6",
+        "mac": "aa:c1:ab:ce:52:b8",
+        "peer": "z"
+      },
+      "z": {
+        "node": "dc1_spine2",
+        "interface": "eth5",
+        "mac": "aa:c1:ab:52:26:e4",
+        "peer": "a"
+      }
+    },
+    {
+      "a": {
+        "node": "dc2_spine1",
+        "interface": "eth1",
+        "mac": "aa:c1:ab:d0:fc:90",
+        "peer": "z"
+      },
+      "z": {
+        "node": "dc2_leaf1",
+        "interface": "eth1",
+        "mac": "aa:c1:ab:5b:b7:61",
+        "peer": "a"
+      }
+    },
+    {
+      "a": {
+        "node": "dc2_leaf1",
+        "interface": "eth3",
+        "mac": "aa:c1:ab:7f:c6:f7",
+        "peer": "z"
+      },
+      "z": {
+        "node": "h5",
+        "interface": "eth1",
+        "mac": "aa:c1:ab:2d:af:1f",
+        "peer": "a"
+      }
+    },
+    {
+      "a": {
+        "node": "dc2_leaf1",
+        "interface": "eth4",
+        "mac": "aa:c1:ab:cc:a5:2e",
+        "peer": "z"
+      },
+      "z": {
+        "node": "h6",
+        "interface": "eth1",
+        "mac": "aa:c1:ab:f0:7f:bd",
+        "peer": "a"
+      }
+    }
+  ]
+}

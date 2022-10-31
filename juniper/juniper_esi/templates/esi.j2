@@ -1,0 +1,15 @@
+set chassis aggregated-devices ethernet device-count {{ ae_number }} 
+{% for ae_intf, prop in esi.items() -%}
+{% for intf in prop.interfaces -%}
+set interfaces {{ intf }} ether-options 802.3ad {{ ae_intf }}
+set interfaces {{ ae_intf }} esi all-active
+set interfaces {{ ae_intf }} aggregated-ether-options lacp active
+set interfaces {{ ae_intf }} aggregated-ether-options lacp system-id {{ prop.system_id }}
+{% if prop.esi_id == 'auto' -%}
+set interfaces {{ ae_intf }} esi auto lacp
+{% else -%}
+set interfaces {{ ae_intf }} esi {{ prop.esi_id }}
+{% endif %}
+{% endfor %}
+{% endfor %}
+ 

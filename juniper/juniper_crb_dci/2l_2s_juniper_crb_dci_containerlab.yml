@@ -1,0 +1,98 @@
+name: 2l_2s_crb_dci
+mgmt:
+  bridge: mgmtbridge
+  ipv4_subnet: 10.10.121.0/24
+topology:
+  nodes:
+    dc1_spine1:
+            kind: vr-vqfx
+            image: vrnetlab/vr-vqfx:21.4R1.12
+            mgmt_ipv4: 10.10.121.60
+    dc1_spine2:
+            kind: vr-vqfx
+            image: vrnetlab/vr-vqfx:21.4R1.12
+            mgmt_ipv4: 10.10.121.61
+    dc1_leaf1:
+            kind: vr-vqfx
+            image: vrnetlab/vr-vqfx:21.4R1.12
+            mgmt_ipv4: 10.10.121.62
+    dc1_leaf2:
+            kind: vr-vqfx
+            image: vrnetlab/vr-vqfx:21.4R1.12
+            mgmt_ipv4: 10.10.121.63
+    dc2_spine1:
+            kind: vr-vqfx
+            image: vrnetlab/vr-vqfx:21.4R1.12
+            mgmt_ipv4: 10.10.121.64
+    dc2_leaf1:
+            kind: vr-vqfx
+            image: vrnetlab/vr-vqfx:21.4R1.12
+            mgmt_ipv4: 10.10.121.65
+    h1:
+            kind: linux
+            image: networkop/host:ifreload
+            exec:
+                    - sleep 5 
+                    - ip route add 10.100.200.0/24 via 10.100.100.254 dev eth1
+            binds:
+                    - hosts/h1_interfaces:/etc/network/interfaces
+            mgmt_ipv4: 10.10.121.66
+    h2:
+            kind: linux
+            image: networkop/host:ifreload
+            exec:
+                    - sleep 5
+                    - ip route add 10.100.100.0/24 via 10.100.200.254 dev eth1
+            binds:
+                    - hosts/h2_interfaces:/etc/network/interfaces
+            mgmt_ipv4: 10.10.121.67
+    h3:
+            kind: linux
+            image: networkop/host:ifreload
+            exec:
+                    - sleep 5
+                    - ip route add 10.100.200.0/24 via 10.100.100.254 dev eth1
+            binds:
+                    - hosts/h3_interfaces:/etc/network/interfaces
+            mgmt_ipv4: 10.10.121.68
+    h4:
+            kind: linux
+            image: networkop/host:ifreload
+            exec:
+                    - sleep 5
+                    - ip route add 10.100.100.0/24 via 10.100.200.254 dev eth1
+            binds:
+                    - hosts/h4_interfaces:/etc/network/interfaces
+            mgmt_ipv4: 10.10.121.69
+    h5:
+            kind: linux
+            image: networkop/host:ifreload
+            exec:
+                    - sleep 5
+                    - ip route add 10.100.200.0/24 via 10.100.100.254 dev eth1
+            binds:
+                    - hosts/h5_interfaces:/etc/network/interfaces
+            mgmt_ipv4: 10.10.121.70
+    h6:
+            kind: linux
+            image: networkop/host:ifreload
+            exec:
+                    - sleep 5
+                    - ip route add 10.100.100.0/24 via 10.100.200.254 dev eth1
+            binds:
+                    - hosts/h6_interfaces:/etc/network/interfaces
+            mgmt_ipv4: 10.10.121.71
+  links:
+          - endpoints: ["dc1_leaf1:eth1", "dc1_spine1:eth1"]
+          - endpoints: ["dc1_leaf1:eth2", "dc1_spine2:eth1"]
+          - endpoints: ["dc1_leaf2:eth1", "dc1_spine1:eth2"]
+          - endpoints: ["dc1_leaf2:eth2", "dc1_spine2:eth2"]
+          - endpoints: ["dc1_leaf1:eth3", "h1:eth1"]
+          - endpoints: ["dc1_leaf1:eth4", "h2:eth1"]
+          - endpoints: ["dc1_leaf2:eth3", "h3:eth1"]
+          - endpoints: ["dc1_leaf2:eth4", "h4:eth1"]
+          - endpoints: ["dc2_spine1:eth5", "dc1_spine1:eth5"]
+          - endpoints: ["dc2_spine1:eth6", "dc1_spine2:eth5"]
+          - endpoints: ["dc2_spine1:eth1", "dc2_leaf1:eth1"]
+          - endpoints: ["dc2_leaf1:eth3", "h5:eth1"]
+          - endpoints: ["dc2_leaf1:eth4", "h6:eth1"]

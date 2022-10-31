@@ -1,4 +1,4 @@
-name: 2l_2s_bo
+name: 2l_2s_crb
 mgmt:
   bridge: mgmtbridge
   ipv4_subnet: 10.10.121.0/24
@@ -23,24 +23,32 @@ topology:
     h1:
             kind: linux
             image: networkop/host:ifreload
+            exec:
+                    - ip route add 10.100.200.0/24 via 10.100.100.254 dev eth1
             binds:
                     - hosts/h1_interfaces:/etc/network/interfaces
             mgmt_ipv4: 10.10.121.54
     h2:
             kind: linux
             image: networkop/host:ifreload
+            exec:
+                    - ip route add 10.100.100.0/24 via 10.100.200.254 dev eth1
             binds:
                     - hosts/h2_interfaces:/etc/network/interfaces
             mgmt_ipv4: 10.10.121.55
     h3:
             kind: linux
             image: networkop/host:ifreload
+            exec:
+                    - ip route add 10.100.200.0/24 via 10.100.100.254 dev eth1
             binds:
                     - hosts/h3_interfaces:/etc/network/interfaces
             mgmt_ipv4: 10.10.121.56
     h4:
             kind: linux
             image: networkop/host:ifreload
+            exec:
+                    - ip route add 10.100.100.0/24 via 10.100.200.254 dev eth1
             binds:
                     - hosts/h4_interfaces:/etc/network/interfaces
             mgmt_ipv4: 10.10.121.57
@@ -53,3 +61,4 @@ topology:
           - endpoints: ["leaf1:eth4", "h2:eth1"]
           - endpoints: ["leaf2:eth3", "h3:eth1"]
           - endpoints: ["leaf2:eth4", "h4:eth1"]
+

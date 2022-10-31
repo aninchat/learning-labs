@@ -1,0 +1,30 @@
+all:
+  children:
+    linux:
+      hosts:
+        clab-2l_2s_crb_dci-h1:
+          ansible_host: 10.10.121.66
+        clab-2l_2s_crb_dci-h2:
+          ansible_host: 10.10.121.67
+        clab-2l_2s_crb_dci-h3:
+          ansible_host: 10.10.121.68
+        clab-2l_2s_crb_dci-h4:
+          ansible_host: 10.10.121.69
+        clab-2l_2s_crb_dci-h5:
+          ansible_host: 10.10.121.70
+        clab-2l_2s_crb_dci-h6:
+          ansible_host: 10.10.121.71
+    vr-vqfx:
+      hosts:
+        clab-2l_2s_crb_dci-dc1_leaf1:
+          ansible_host: 10.10.121.62
+        clab-2l_2s_crb_dci-dc1_leaf2:
+          ansible_host: 10.10.121.63
+        clab-2l_2s_crb_dci-dc1_spine1:
+          ansible_host: 10.10.121.60
+        clab-2l_2s_crb_dci-dc1_spine2:
+          ansible_host: 10.10.121.61
+        clab-2l_2s_crb_dci-dc2_leaf1:
+          ansible_host: 10.10.121.65
+        clab-2l_2s_crb_dci-dc2_spine1:
+          ansible_host: 10.10.121.64

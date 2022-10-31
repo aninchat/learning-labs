@@ -7,6 +7,8 @@ interfaces:
                 address: '10.10.0.1/31'
         xe-0/0/1:
                 address: '10.10.0.5/31'
+        xe-0/0/2:
+                address: '10.10.0.9/31'
 bgp:
         as_number: 65500
         router_id: '192.168.100.1'
@@ -17,5 +19,8 @@ bgp:
                 10.10.0.4:
                         remote_as: 65422
                         loopback: '192.168.10.2'
+                10.10.0.8:
+                        remote_as: 65423
+                        loopback: '192.168.10.3'
 rd: '192.168.100.1:65500'
 vni_source: 'lo0.0'

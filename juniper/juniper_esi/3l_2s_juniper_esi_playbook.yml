@@ -1,0 +1,34 @@
+---
+
+- name: Automated deployment of a 3-stage two leaf, two spine Juniper bridged overlay
+  hosts: all
+  tasks:
+    - name: configuring p2p fabric interfaces
+      cli_config:
+        config: "{{ lookup('template', 'templates/p2p_fabric_interface_creation.j2') }}"
+    - name: configuring policies on devices
+      cli_config:
+        config: "{{ lookup('template', 'templates/policy.j2') }}"
+    - name: configuring BGP on devices
+      cli_config:
+        config: "{{ lookup('template', 'templates/bgp.j2') }}"
+    - name: configuring ESI LAG on requested leafs
+      when: inventory_hostname in groups["esi"]
+      cli_config:
+        config: "{{ lookup('template', 'templates/esi.j2') }}"
+    - name: configuring EVPN services and VLANs on leafs
+      when: inventory_hostname in groups["leafs"]
+      cli_config:
+        config: "{{ lookup('template', 'templates/evpn.j2') }}"
+    - name: configuring communities for ESI LAG
+      when: inventory_hostname in groups["esi"]
+      cli_config:
+        config: "{{ lookup('template', 'templates/communities.j2') }}"
+    - name: configuring ESI policies for type-1 import
+      when: inventory_hostname in groups["esi"]
+      cli_config:
+        config: "{{ lookup('template', 'templates/policy_esi.j2') }}"
+    - name: configuring VLAN mapping to host interfaces on leafs
+      when: inventory_hostname in groups["leafs"]
+      cli_config:
+        config: "{{ lookup('template', 'templates/vlan_mapping.j2') }}"
