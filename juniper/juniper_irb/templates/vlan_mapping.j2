@@ -1,0 +1,8 @@
+{% for vlan in vlans -%}
+{% if vlans[vlan].irb_only == 'no' -%}
+{% for interface in vlans[vlan].interfaces -%}
+set interfaces {{ interface }} unit 0 family ethernet-switching interface-mode access
+set interfaces {{ interface }} unit 0 family ethernet-switching vlan members {{ vlans[vlan].name }}
+{% endfor -%}
+{% endif -%}
+{% endfor -%}

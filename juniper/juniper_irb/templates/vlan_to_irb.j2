@@ -1,0 +1,3 @@
+{% for vlan in vlans -%}
+set vlans {{ vlans[vlan].name }} l3-interface irb.{{ vlan }}
+{% endfor -%}

@@ -1,0 +1,42 @@
+---
+
+- name: Automated deployment of a 3-stage Clos fabric with ESI LAG and asymmetric IRB b/w VLANs 100 and 200
+  hosts: all
+  tasks:
+    - name: configuring p2p fabric interfaces
+      cli_config:
+        config: "{{ lookup('template', 'templates/p2p_fabric_interface_creation.j2') }}"
+    - name: configuring ECMP and loopback policies on devices
+      cli_config:
+        config: "{{ lookup('template', 'templates/policy.j2') }}"
+    - name: configuring BGP on devices
+      cli_config:
+        config: "{{ lookup('template', 'templates/bgp.j2') }}"
+    - name: configuring ESI LAG on required leafs
+      when: inventory_hostname in groups["esi"]
+      cli_config:
+        config: "{{ lookup('template', 'templates/esi.j2') }}"
+    - name: configuring EVPN services and VLANs on leafs
+      when: inventory_hostname in groups["leafs"]
+      cli_config:
+        config: "{{ lookup('template', 'templates/evpn.j2') }}"
+    - name: configuring communities for leafs
+      when: inventory_hostname in groups["leafs"]
+      cli_config:
+        config: "{{ lookup('template', 'templates/communities.j2') }}"
+    - name: configuring import policy on leafs
+      when: inventory_hostname in groups["leafs"]
+      cli_config:
+        config: "{{ lookup('template', 'templates/policy_esi.j2') }}"
+    - name: configuring VLAN mapping to host interfaces on leafs
+      when: inventory_hostname in groups["leafs"]
+      cli_config:
+        config: "{{ lookup('template', 'templates/vlan_mapping.j2') }}"
+    - name: configuring IRB interfaces on required leafs
+      when: inventory_hostname in groups["irb"]
+      cli_config:
+              config: "{{ lookup('template', 'templates/irb_creation.j2') }}"
+    - name: mapping IRB L3 interfaces to VLANs
+      when: inventory_hostname in groups["irb"]
+      cli_config:
+        config: "{{ lookup('template', 'templates/vlan_to_irb.j2') }}"

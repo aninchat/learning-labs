@@ -1,0 +1,7 @@
+{% if irb.enabled == 'yes' -%}
+{% for vlan in irb.vlans -%}
+set interfaces irb unit {{ vlan }} virtual-gateway-accept-data
+set interfaces irb unit {{ vlan }} family inet address {{ irb.vlans[vlan].address }} virtual-gateway-address {{ irb.vlans[vlan].virtual_address }}
+set interfaces irb unit {{ vlan }} virtual-gateway-v4-mac {{ irb.vlans[vlan].virtual_mac }}
+{% endfor %}
+{% endif %}

@@ -1,0 +1,38 @@
+---
+role: 'spine'
+interfaces:
+        lo0:
+                address: '192.168.100.1/32'
+        xe-0/0/0:
+                address: '10.10.0.1/31'
+        xe-0/0/1:
+                address: '10.10.0.5/31'
+        xe-0/0/2:
+                address: '10.10.0.9/31'
+        xe-0/0/3:
+                address: '10.10.0.13/31'
+        xe-0/0/4:
+                address: '10.10.0.17/31'
+bgp:
+        as_number: 65500
+        router_id: '192.168.100.1'
+        neighbors:
+                10.10.0.0:
+                        remote_as: 65421
+                        loopback: '192.168.10.1'
+                10.10.0.4:
+                        remote_as: 65422
+                        loopback: '192.168.10.2'
+                10.10.0.8:
+                        remote_as: 65423
+                        loopback: '192.168.10.3'
+                10.10.0.12:
+                        remote_as: 65424
+                        loopback: '192.168.10.4'
+                10.10.0.16:
+                        remote_as: 65425
+                        loopback: '192.168.10.5'
+switch_options:
+        rd: '192.168.100.1:65500'
+        vrf_target: '65500:1'
+        vtep_source: 'lo0.0'

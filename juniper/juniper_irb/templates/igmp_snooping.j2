@@ -1,0 +1,5 @@
+{% if igmp_snooping.enabled == 'yes' -%}
+{% for vlan in igmp_snooping.vlans -%}
+set protocol igmp-snooping vlan {{ vlan }}
+{% endfor %}
+{% endif %}

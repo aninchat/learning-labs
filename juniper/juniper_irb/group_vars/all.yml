@@ -1,0 +1,7 @@
+---
+
+ansible_connection: ansible.netcommon.network_cli
+ansible_network_os: junos
+ansible_user: admin
+ansible_password: admin@123
+platform: 'junos'

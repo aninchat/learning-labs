@@ -1,0 +1,30 @@
+all:
+  children:
+    linux:
+      hosts:
+        clab-juniper_esi_smet-h1:
+          ansible_host: 172.20.20.21
+        clab-juniper_esi_smet-h2:
+          ansible_host: 172.20.20.22
+        clab-juniper_esi_smet-h3:
+          ansible_host: 172.20.20.23
+        clab-juniper_esi_smet-h4:
+          ansible_host: 172.20.20.24
+        clab-juniper_esi_smet-h5:
+          ansible_host: 172.20.20.25
+    vr-vqfx:
+      hosts:
+        clab-juniper_esi_smet-leaf1:
+          ansible_host: 172.20.20.11
+        clab-juniper_esi_smet-leaf2:
+          ansible_host: 172.20.20.12
+        clab-juniper_esi_smet-leaf3:
+          ansible_host: 172.20.20.13
+        clab-juniper_esi_smet-leaf4:
+          ansible_host: 172.20.20.14
+        clab-juniper_esi_smet-leaf5:
+          ansible_host: 172.20.20.15
+        clab-juniper_esi_smet-spine1:
+          ansible_host: 172.20.20.101
+        clab-juniper_esi_smet-spine2:
+          ansible_host: 172.20.20.102

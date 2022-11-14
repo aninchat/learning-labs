@@ -1,0 +1,64 @@
+---
+role: 'leaf'
+irb:
+        enabled: 'yes'
+        vlans:
+                100:
+                        address: '10.100.100.252/24'
+                        virtual_address: '10.100.100.254'
+                        virtual_mac: '00:00:00:00:01:00'
+                200:
+                        address: '10.100.200.252/24'
+                        virtual_address: '10.100.200.254'
+                        virtual_mac: '00:00:00:00:02:00'
+interfaces:
+        lo0:
+                address: '192.168.10.4/32'
+        xe-0/0/0:
+                address: '10.10.0.12/31'
+        xe-0/0/1:
+                address: '10.10.0.14/31'
+bgp:
+        as_number: 65424
+        router_id: '192.168.10.4'
+        neighbors:
+                10.10.0.13:
+                        remote_as: 65500
+                        loopback: '192.168.100.1'
+                10.10.0.15:
+                        remote_as: 65500
+                        loopback: '192.168.100.2'
+communities:
+        leaf1_leaf2:
+                - 'target:1:2'
+        leaf3:
+                - 'target:65423:1'
+        leaf5:
+                - 'target:65425:1'
+policies:
+        policy_statements:
+                import:
+                        terms:
+                                leaf1_leaf2:
+                                        community: 'leaf1_leaf2'
+                                leaf3:
+                                        community: 'leaf3'
+                                leaf5:
+                                        community: 'leaf5'
+switch_options:
+        rd: '192.168.10.4:65424'
+        vrf_target: '65424:1'
+        vtep_source: 'lo0.0'
+vlans:
+        100:
+                vni: 10100
+                name: 'v100'
+                rt: '100:100'
+                irb_only: 'yes'
+        200:
+                vni: 10200
+                name: 'v200'
+                rt: '200:200'
+                irb_only: 'no'
+                interfaces:
+                        - 'xe-0/0/2'

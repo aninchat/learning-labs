@@ -1,0 +1,71 @@
+---
+role: 'leaf'
+ae_number: 5
+irb:
+        enabled: 'yes'
+        vlans:
+                100:
+                        address: '10.100.100.249/24'
+                        virtual_address: '10.100.100.254'
+                        virtual_mac: '00:00:00:00:01:00'
+                200:
+                        address: '10.100.200.249/24'
+                        virtual_address: '10.100.200.254'
+                        virtual_mac: '00:00:00:00:02:00'
+interfaces:
+        lo0:
+                address: '192.168.10.1/32'
+        xe-0/0/0:
+                address: '10.10.0.0/31'
+        xe-0/0/1:
+                address: '10.10.0.2/31'
+bgp:
+        as_number: 65421
+        router_id: '192.168.10.1'
+        neighbors:
+                10.10.0.1:
+                        remote_as: 65500
+                        loopback: '192.168.100.1'
+                10.10.0.3:
+                        remote_as: 65500
+                        loopback: '192.168.100.2'
+esi:
+        ae0:
+                interfaces:
+                        - 'xe-0/0/2'
+                system_id: '00:00:00:00:00:11'
+                esi_id: '00:00:00:00:00:00:00:00:00:11'
+communities:
+        leaf3:
+                - 'target:65423:1'
+        leaf4:
+                - 'target:65424:1'
+        leaf5:
+                - 'target:65425:1'
+policies:
+        policy_statements:
+                import:
+                        terms:
+                                leaf3:
+                                        community: 'leaf3'
+                                leaf4:
+                                        community: 'leaf4'
+                                leaf5:
+                                        community: 'leaf5'
+switch_options:
+        rd: '192.168.10.1:65421'
+        vrf_target: '1:2'
+        vtep_source: 'lo0.0'
+vlans:
+        100:
+                vni: 10100
+                name: 'v100'
+                rt: '100:100'
+                irb_only: 'no'
+                interfaces:
+                        - 'ae0'
+        200:
+                vni: 10200
+                name: 'v200'
+                rt: '200:200'
+                irb_only: 'yes'

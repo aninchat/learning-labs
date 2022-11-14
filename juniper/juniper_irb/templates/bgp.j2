@@ -1,0 +1,21 @@
+set routing-options router-id {{ bgp.router_id }}
+set routing-options autonomous-system {{ bgp.as_number }}
+set protocols bgp group underlay type external
+set protocols bgp group underlay export ALLOW_LOOPBACK
+set protocols bgp group underlay multipath
+{% for neighbor in bgp.neighbors -%}
+set protocols bgp group underlay neighbor {{ neighbor }} family inet unicast
+set protocols bgp group underlay neighbor {{ neighbor }} peer-as {{ bgp.neighbors[neighbor].remote_as }}
+{% endfor -%}
+set protocols bgp group overlay type external
+{% if role == 'spine' -%}
+set protocols bgp group overlay multihop no-nexthop-change
+{% else -%}
+set protocols bgp group overlay multihop
+{% endif -%}
+set protocols bgp group overlay local-address {{ bgp.router_id }}
+set protocols bgp group overlay multipath
+{% for neighbor in bgp.neighbors -%}
+set protocols bgp group overlay neighbor {{ bgp.neighbors[neighbor].loopback }} family evpn signaling
+set protocols bgp group overlay neighbor {{ bgp.neighbors[neighbor].loopback }} peer-as {{ bgp.neighbors[neighbor].remote_as }}
+{% endfor -%}

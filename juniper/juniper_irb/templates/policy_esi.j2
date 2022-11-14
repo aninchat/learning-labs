@@ -1,0 +1,8 @@
+{% for policy_name, policy_terms in policies.policy_statements.items() -%}
+{% for term_name, term_value in policy_terms.terms.items() -%}
+set policy-options policy-statement {{ policy_name }} term {{ term_name }} from community {{ term_value.community }}
+set policy-options policy-statement {{ policy_name }} term {{ term_name }} then accept
+{% endfor -%}
+set policy-options policy-statement {{ policy_name }} term default then reject
+set switch-options vrf-import {{ policy_name }}
+{% endfor %}

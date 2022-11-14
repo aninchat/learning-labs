@@ -1,0 +1,33 @@
+---
+
+all:
+  children:
+    leafs:
+      hosts:
+        leaf1:
+          ansible_host: 172.20.20.11
+        leaf2:
+          ansible_host: 172.20.20.12
+        leaf3:
+          ansible_host: 172.20.20.13
+        leaf4:
+          ansible_host: 172.20.20.14
+        leaf5:
+          ansible_host: 172.20.20.15
+    spines:
+      hosts:
+        spine1:
+          ansible_host: 172.20.20.101
+        spine2:
+          ansible_host: 172.20.20.102
+    esi:
+      hosts:
+        leaf1:
+        leaf2:
+    irb:
+      hosts:
+        leaf1:
+        leaf2:
+        leaf3:
+        leaf4:
+        leaf5:
