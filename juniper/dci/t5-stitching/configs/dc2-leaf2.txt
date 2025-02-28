@@ -99,7 +99,7 @@ routing-instances {
         }
         interface irb.50;
         route-distinguisher 192.0.2.22:500;
-        vrf-target target:500:500;
+        vrf-target target:600:600;
     }
 }
 routing-options {                       
