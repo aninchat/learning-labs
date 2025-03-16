@@ -1,0 +1,43 @@
+set interfaces xe-0/0/0 unit 0 family inet address 198.51.100.3/31
+set interfaces xe-0/0/1 unit 0 family inet address 198.51.100.7/31
+set interfaces xe-0/0/2 unit 0 family inet address 198.51.100.11/31
+set interfaces xe-0/0/3 unit 0 family inet address 198.51.100.15/31
+set interfaces xe-0/0/4 unit 0 family inet address 198.51.100.19/31
+set interfaces lo0 unit 0 family inet address 192.0.2.102/32 primary
+set interfaces lo0 unit 0 family inet address 192.0.2.112/32
+set policy-options policy-statement allow-loopback term 1 from protocol direct
+set policy-options policy-statement allow-loopback term 1 from route-filter 192.0.2.0/24 orlonger
+set policy-options policy-statement allow-loopback term 1 then accept
+set policy-options policy-statement allow-loopback term 2 from protocol bgp
+set policy-options policy-statement allow-loopback term 2 from route-filter 192.0.2.0/24 orlonger
+set policy-options policy-statement allow-loopback term 2 then accept
+set policy-options policy-statement allow-loopback term deny-all then reject
+set routing-options router-id 192.0.2.102
+set routing-options autonomous-system 65500
+set protocols evpn encapsulation vxlan
+set protocols evpn assisted-replication replicator inet 192.0.2.112
+set protocols evpn assisted-replication replicator vxlan-encapsulation-source-ip ingress-replication-ip
+set protocols evpn extended-vni-list all
+set protocols bgp group underlay type external
+set protocols bgp group underlay family inet unicast
+set protocols bgp group underlay export allow-loopback
+set protocols bgp group underlay neighbor 198.51.100.2 peer-as 65411
+set protocols bgp group underlay neighbor 198.51.100.6 peer-as 65412
+set protocols bgp group underlay neighbor 198.51.100.10 peer-as 65413
+set protocols bgp group underlay neighbor 198.51.100.14 peer-as 65414
+set protocols bgp group underlay neighbor 198.51.100.18 peer-as 65415
+set protocols bgp group overlay type external
+set protocols bgp group overlay multihop no-nexthop-change
+set protocols bgp group overlay family evpn signaling
+set protocols bgp group overlay local-address 192.0.2.102
+set protocols bgp group overlay neighbor 192.0.2.11 peer-as 65411
+set protocols bgp group overlay neighbor 192.0.2.12 peer-as 65412
+set protocols bgp group overlay neighbor 192.0.2.13 peer-as 65413
+set protocols bgp group overlay neighbor 192.0.2.14 peer-as 65414
+set protocols bgp group overlay neighbor 192.0.2.15 peer-as 65415
+set protocols lldp interface all
+set switch-options vtep-source-interface lo0.0
+set switch-options route-distinguisher 192.0.2.102:1
+set switch-options vrf-target target:1:1
+set vlans v10 vlan-id 10                
+set vlans v10 vxlan vni 10010
