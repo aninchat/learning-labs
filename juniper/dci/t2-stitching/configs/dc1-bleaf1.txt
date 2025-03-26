@@ -1,0 +1,131 @@
+interfaces {
+    et-0/0/0 {
+        unit 0 {
+            family inet {
+                address 198.51.100.16/31;
+            }
+        }
+    }
+    et-0/0/1 {
+        unit 0 {
+            family inet {
+                address 198.51.100.18/31;
+            }
+        }
+    }
+    et-0/0/2 {
+        unit 0 {
+            family inet {
+                address 198.51.100.32/31;
+            }
+        }
+    }
+    lo0 {
+        unit 0 {
+            family inet {
+                address 192.0.2.15/32;
+            }
+        }
+    }
+}
+forwarding-options {
+    tunnel-termination;
+}
+policy-options {
+    policy-statement allow-loopback {
+        term 1 {
+            from {
+                protocol direct;
+                route-filter 192.0.2.0/24 orlonger;
+            }
+            then accept;
+        }
+        term deny-all {
+            then reject;
+        }
+    }
+    policy-statement ecmp {
+        then {
+            load-balance per-flow;
+        }
+    }
+}
+routing-instances {
+    vrf1 {
+        instance-type vrf;
+        protocols {
+            evpn {
+                irb-symmetric-routing {
+                    vni 10500;
+                }
+                interconnect {
+                    vrf-target target:5000:5000;
+                    route-distinguisher 192.0.2.15:5000;
+                }
+                ip-prefix-routes {
+                    advertise direct-nexthop;
+                    encapsulation vxlan;
+                    vni 10500;
+                }
+            }
+        }
+        route-distinguisher 192.0.2.15:500;
+        vrf-target target:500:500;
+    }
+}
+routing-options {                       
+    router-id 192.0.2.15;
+    autonomous-system 65415;
+    forwarding-table {
+        export ecmp;
+    }
+}
+protocols {
+    bgp {
+        group underlay {
+            type external;
+            family inet {
+                unicast;
+            }
+            export allow-loopback;
+            peer-as 65500;
+            multipath;
+            neighbor 198.51.100.17;
+            neighbor 198.51.100.19;
+        }
+        group overlay {
+            type external;
+            multihop;
+            local-address 192.0.2.15;
+            family evpn {
+                signaling;
+            }
+            peer-as 65500;
+            neighbor 192.0.2.101;
+            neighbor 192.0.2.102;
+        }
+        group dci-underlay {
+            type external;
+            family inet {
+                unicast;
+            }
+            export allow-loopback;
+            peer-as 65510;
+            multipath;
+            neighbor 198.51.100.33;
+        }
+        group dci-overlay {
+            type external;
+            multihop;
+            local-address 192.0.2.15;
+            family evpn {
+                signaling;
+            }
+            peer-as 65510;
+            neighbor 192.0.2.150;
+        }
+    }
+    lldp {
+        interface all;
+    }
+}

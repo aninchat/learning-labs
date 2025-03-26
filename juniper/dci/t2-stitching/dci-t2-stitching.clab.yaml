@@ -1,0 +1,84 @@
+name: juniper-dci-ott
+prefix: ""
+mgmt:
+  network: clab_mgmt
+  ipv4-subnet: 172.21.21.0/24
+topology:
+  defaults:
+    kind: juniper_vjunosswitch
+  kinds:
+    juniper_vjunosswitch:
+      image: aninchat/vjunos-switch:23.4R2
+      startup-config: configs/__clabNodeName__.txt
+    juniper_vjunosevolved:
+      image: vrnetlab/juniper_vjunosevolved:24.4R1.8
+      startup-config: configs/__clabNodeName__.txt
+    linux:
+      image: ghcr.io/srl-labs/network-multitool
+      binds:
+        - base-configs:/base-configs
+  nodes:
+    dc1-spine1:
+    dc1-spine2:
+    dc1-leaf1:
+    dc1-leaf2:
+    dc1-leaf3:
+    dc1-leaf4:
+    dc1-bleaf1:
+      kind: juniper_vjunosevolved
+    dc2-spine1:
+    dc2-spine2:
+    dc2-leaf1:
+    dc2-leaf2:
+    dc2-bleaf1:
+      kind: juniper_vjunosevolved
+    core:
+    s1:
+      kind: linux
+      exec:
+        - bash base-configs/s1.sh
+    s2:
+      kind: linux
+      exec:
+        - bash base-configs/s2.sh
+    s3:
+      kind: linux
+      exec:
+        - bash base-configs/s3.sh
+    s4:
+      kind: linux
+      exec:
+        - bash base-configs/s4.sh
+    s5:
+      kind: linux
+      exec:
+        - bash base-configs/s5.sh
+  links:
+    # dc1 connections
+    - endpoints: ["dc1-leaf1:eth1", "dc1-spine1:eth1"]
+    - endpoints: ["dc1-leaf1:eth2", "dc1-spine2:eth1"]
+    - endpoints: ["dc1-leaf2:eth1", "dc1-spine1:eth2"]
+    - endpoints: ["dc1-leaf2:eth2", "dc1-spine2:eth2"]
+    - endpoints: ["dc1-leaf3:eth1", "dc1-spine1:eth3"]
+    - endpoints: ["dc1-leaf3:eth2", "dc1-spine2:eth3"]
+    - endpoints: ["dc1-leaf4:eth1", "dc1-spine1:eth4"]
+    - endpoints: ["dc1-leaf4:eth2", "dc1-spine2:eth4"]
+    - endpoints: ["dc1-bleaf1:eth1", "dc1-spine1:eth5"]
+    - endpoints: ["dc1-bleaf1:eth2", "dc1-spine2:eth5"]
+    - endpoints: ["dc1-leaf1:eth3", "s1:eth1"]
+    - endpoints: ["dc1-leaf2:eth3", "s2:eth1"]
+    - endpoints: ["dc1-leaf3:eth3", "s2:eth2"]
+    - endpoints: ["dc1-leaf4:eth3", "s3:eth1"]
+    # dc2 connections
+    - endpoints: ["dc2-leaf1:eth1", "dc2-spine1:eth1"]
+    - endpoints: ["dc2-leaf1:eth2", "dc2-spine2:eth1"]
+    - endpoints: ["dc2-leaf2:eth1", "dc2-spine1:eth2"]
+    - endpoints: ["dc2-leaf2:eth2", "dc2-spine2:eth2"]
+    - endpoints: ["dc2-bleaf1:eth1", "dc2-spine1:eth3"]
+    - endpoints: ["dc2-bleaf1:eth2", "dc2-spine2:eth3"]
+    - endpoints: ["dc2-leaf1:eth3", "s4:eth1"]
+    - endpoints: ["dc2-leaf2:eth3", "s5:eth1"]
+    # border leaf to core connections
+    - endpoints: ["dc1-bleaf1:eth3", "core:eth1"]
+    - endpoints: ["dc2-bleaf1:eth3", "core:eth2"]
+
