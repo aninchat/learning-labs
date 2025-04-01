@@ -50,27 +50,38 @@ policy-options {
         }
     }
 }
-routing-instances {
-    vrf1 {
-        instance-type vrf;
+routing-instances {                     
+    macvrf-1 {
+        instance-type mac-vrf;
         protocols {
             evpn {
-                irb-symmetric-routing {
-                    vni 10500;
-                }
+                encapsulation vxlan;
+                default-gateway do-not-advertise;
+                extended-vni-list all;
                 interconnect {
-                    vrf-target target:5000:5000;
-                    route-distinguisher 192.0.2.15:5000;
-                }
-                ip-prefix-routes {
-                    advertise direct-nexthop;
+                    vrf-target target:1:2;
+                    route-distinguisher 192.0.2.15:1000;
+                    esi {
+                        00:00:00:00:00:00:00:00:11:22;
+                        all-active;
+                    }
+                    interconnected-vni-list 10010;
                     encapsulation vxlan;
-                    vni 10500;
                 }
             }
         }
-        route-distinguisher 192.0.2.15:500;
-        vrf-target target:500:500;
+        vtep-source-interface lo0.0;
+        service-type vlan-based;
+        route-distinguisher 192.0.2.15:1;
+        vrf-target target:1:1;
+        vlans {
+            v10 {
+                vlan-id 10;
+                vxlan {
+                    vni 10010;
+                }
+            }
+        }
     }
 }
 routing-options {                       
