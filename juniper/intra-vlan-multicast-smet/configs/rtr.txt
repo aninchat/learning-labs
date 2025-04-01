@@ -1,0 +1,35 @@
+interfaces {
+    ge-0/0/0 {
+        unit 0 {
+            family ethernet-switching {
+                interface-mode access;
+                vlan {
+                    members v10;
+                }
+            }
+        }
+    }
+    irb {
+        unit 10 {
+            family inet {
+                address 172.16.10.254/24;
+            }
+            mac 00:00:5e:00:53:00;
+        }
+    }
+}
+protocols {
+    pim {
+        family inet;
+        interface irb.10;
+    }
+    lldp {
+        interface all;
+    }
+}
+vlans {
+    v10 {
+        vlan-id 10;
+        l3-interface irb.10;
+    }
+}
