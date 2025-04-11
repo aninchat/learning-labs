@@ -7,4 +7,4 @@ This lab deploys a bridged overlay design (Layer 2 extension) using Juniper vJun
 
 The topology is shown below. The username/password for vJunos-switch nodes is `admin/admin@123` and the username/password for the servers is `user/multit00l`.
 
-![intra-vlan-multicast-ar-smet-topology](/static/images/juniper-intra-vlan-multicast-smet.png)
+![inter-vlan-multicast-external-mrouter-topology](/static/images/juniper-inter-vlan-multicast-external-mrouter.png)
