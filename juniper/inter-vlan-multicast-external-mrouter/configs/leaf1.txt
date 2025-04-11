@@ -1,0 +1,181 @@
+interfaces {
+    ge-0/0/0 {
+        unit 0 {
+            family inet {
+                address 198.51.100.0/31;
+            }
+        }
+    }
+    ge-0/0/1 {
+        unit 0 {
+            family inet {
+                address 198.51.100.2/31;
+            }
+        }
+    }
+    ge-0/0/2 {
+        unit 0 {
+            family ethernet-switching {
+                interface-mode access;
+                vlan {
+                    members v10;
+                }
+            }
+        }
+    }
+    ge-0/0/3 {
+        unit 0 {
+            family ethernet-switching {
+                interface-mode access;
+                vlan {
+                    members v10;
+                }
+            }
+        }
+    }
+    ge-0/0/4 {
+        unit 0 {
+            family ethernet-switching {
+                interface-mode access;
+                vlan {
+                    members v20;
+                }
+            }
+        }
+    }
+    irb {
+        unit 10 {
+            family inet {
+                address 172.16.10.254/24;
+            }
+            mac 00:00:5e:00:53:00;
+        }
+        unit 20 {
+            family inet {
+                address 172.16.20.254/24;
+            }
+            mac 00:00:5e:00:53:00;
+        }
+    }
+    lo0 {
+        unit 0 {
+            family inet {
+                address 192.0.2.11/32;
+            }
+        }
+    }
+}
+policy-options {
+    policy-statement allow-loopback {
+        term 1 {
+            from {
+                protocol direct;
+                route-filter 192.0.2.0/24 orlonger;
+            }
+            then accept;
+        }
+        term deny-all {
+            then reject;
+        }
+    }
+    policy-statement ecmp {
+        then {
+            load-balance per-flow;
+        }
+    }
+}
+routing-instances {
+    macvrf-1 {
+        instance-type mac-vrf;
+        protocols {
+            igmp-snooping {
+                version 2;
+                vlan v10;
+                vlan v20;
+            }
+            evpn {
+                encapsulation vxlan;
+                default-gateway do-not-advertise;
+                extended-vni-list all;
+            }
+        }
+        vtep-source-interface lo0.0;
+        service-type vlan-aware;
+        interface ge-0/0/2.0;
+        interface ge-0/0/3.0;
+        interface ge-0/0/4.0;
+        route-distinguisher 192.0.2.11:1;
+        vrf-target target:1:1;
+        vlans {
+            v10 {
+                vlan-id 10;
+                l3-interface irb.10;
+                vxlan {
+                    vni 10010;
+                }
+            }
+            v20 {
+                vlan-id 20;
+                l3-interface irb.20;
+                vxlan {
+                    vni 10020;
+                }
+            }
+        }
+    }
+    vrf1 {
+        instance-type vrf;
+        protocols {
+            evpn {
+                irb-symmetric-routing {
+                    vni 10500;
+                }
+                ip-prefix-routes {
+                    advertise direct-nexthop;
+                    encapsulation vxlan;
+                    vni 10500;
+                }
+            }
+        }
+        interface irb.10;
+        interface irb.20;
+        route-distinguisher 192.0.2.11:500;
+        vrf-target target:500:500;
+    }
+}
+routing-options {                       
+    router-id 192.0.2.11;
+    autonomous-system 65411;
+    forwarding-table {
+        export ecmp;
+    }
+}
+protocols {
+    bgp {
+        group underlay {
+            type external;
+            family inet {
+                unicast;
+            }
+            export allow-loopback;
+            peer-as 65500;
+            multipath;
+            neighbor 198.51.100.1;
+            neighbor 198.51.100.3;
+        }
+        group overlay {
+            type external;
+            multihop;
+            local-address 192.0.2.11;
+            family evpn {
+                signaling;
+            }
+            peer-as 65500;
+            neighbor 192.0.2.101;
+            neighbor 192.0.2.102;
+        }
+    }
+    lldp {
+        interface all;
+    }
+}

@@ -1,0 +1,92 @@
+name: juniper-inter-vlan-multicast-external-mrouter
+prefix: ""
+mgmt:
+  network: clab_mgmt
+  ipv4-subnet: 172.21.21.0/24
+topology:
+  defaults:
+    kind: juniper_vjunosswitch
+  kinds:
+    juniper_vjunosswitch:
+      image: aninchat/vjunos-switch:24.4R1.9
+      startup-config: configs/__clabNodeName__.txt
+    linux:
+      image: ghcr.io/srl-labs/network-multitool
+      binds:
+        - base-configs:/base-configs
+  nodes:
+    spine1:
+    spine2:
+    leaf1:
+    leaf2:
+    leaf3:
+    leaf4:
+    leaf5:
+    rtr:
+    src:
+      kind: linux
+      image: ostinato/ostinato:v1.3.0-1
+      ports:
+        - 5900:5900/tcp
+    rcv1:
+      kind: linux
+      exec:
+        - sleep 5
+        - bash base-configs/rcv1.sh
+        - sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=0
+        - sysctl -w net.ipv4.conf.eth1.force_igmp_version=2
+    rcv2:
+      kind: linux
+      exec:
+        - sleep 5
+        - bash base-configs/rcv2.sh
+        - sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=0
+        - sysctl -w net.ipv4.conf.eth1.force_igmp_version=2
+    rcv3:
+      kind: linux
+      exec:
+        - sleep 5
+        - bash base-configs/rcv3.sh
+        - sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=0
+        - sysctl -w net.ipv4.conf.bond0.force_igmp_version=2
+    rcv4:
+      kind: linux
+      exec:
+        - sleep 5
+        - bash base-configs/rcv4.sh
+        - sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=0
+        - sysctl -w net.ipv4.conf.eth1.force_igmp_version=2
+    rcv5:
+      kind: linux
+      exec:
+        - sleep 5
+        - bash base-configs/rcv5.sh
+        - sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=0
+        - sysctl -w net.ipv4.conf.eth1.force_igmp_version=2
+  links:
+  # leaf-spine links
+    - endpoints: ["leaf1:eth1", "spine1:eth1"]
+    - endpoints: ["leaf1:eth2", "spine2:eth1"]
+    - endpoints: ["leaf2:eth1", "spine1:eth2"]
+    - endpoints: ["leaf2:eth2", "spine2:eth2"]
+    - endpoints: ["leaf3:eth1", "spine1:eth3"]
+    - endpoints: ["leaf3:eth2", "spine2:eth3"]
+    - endpoints: ["leaf4:eth1", "spine1:eth4"]
+    - endpoints: ["leaf4:eth2", "spine2:eth4"]
+    - endpoints: ["leaf5:eth1", "spine1:eth5"]
+    - endpoints: ["leaf5:eth2", "spine2:eth5"]
+    # server-facing links
+    - endpoints: ["leaf1:eth3", "src:eth1"]
+    - endpoints: ["leaf1:eth4", "rcv1:eth1"]
+    - endpoints: ["leaf1:eth5", "rcv2:eth1"]
+      # ESI LAG rcv to leaf2/leaf3
+    - endpoints: ["leaf2:eth3", "rcv3:eth1"]
+    - endpoints: ["leaf2:eth4", "src:eth2"]
+    - endpoints: ["leaf3:eth3", "rcv3:eth2"]
+    - endpoints: ["leaf3:eth4", "rcv4:eth1"]
+      # legacy VTEP rcv and src
+    - endpoints: ["leaf4:eth3", "rcv5:eth1"]
+    - endpoints: ["leaf4:eth4", "src:eth3"]
+      # external mrouter and src behind it
+    - endpoints: ["leaf5:eth3", "rtr:eth1"]
+    - endpoints: ["rtr:eth2", "src:eth4"]
