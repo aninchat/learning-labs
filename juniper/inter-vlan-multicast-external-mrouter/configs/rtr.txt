@@ -26,10 +26,22 @@ interfaces {
             }
         }
     }
+    lo0 {
+        unit 0 {
+            family inet {
+                address 192.0.2.250/32;
+            }
+        }
+    }
 }
 protocols {
     pim {
         family inet;
+        rp {
+            static {
+                address 192.0.2.150;
+            }
+        }
         interface irb.10;
         interface irb.20;
         interface irb.30;
