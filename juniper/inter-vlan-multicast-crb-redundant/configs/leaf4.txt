@@ -4,38 +4,28 @@ chassis {
             device-count 1;
         }
     }
+    fpc 0 {
+        pic 0 {
+            tunnel-services;
+        }
+    }
 }
 interfaces {
     ge-0/0/0 {
         unit 0 {
             family inet {
-                address 198.51.100.8/31;
+                address 198.51.100.12/31;
             }
         }
     }
     ge-0/0/1 {
         unit 0 {
             family inet {
-                address 198.51.100.10/31;
+                address 198.51.100.14/31;
             }
         }
     }
     ge-0/0/2 {
-        ether-options {
-            802.3ad ae1;
-        }
-    }
-    ge-0/0/3 {
-        unit 0 {
-            family ethernet-switching {
-                interface-mode access;
-                vlan {
-                    members v10;
-                }
-            }
-        }
-    }
-    ge-0/0/4 {
         unit 0 {
             family ethernet-switching {
                 interface-mode access;
@@ -45,24 +35,39 @@ interfaces {
             }
         }
     }
+    ge-0/0/3 {
+        unit 0 {                        
+            family ethernet-switching {
+                interface-mode access;
+                vlan {
+                    members v10;
+                }
+            }
+        }
+    }
+    ge-0/0/5 {
+        ether-options {
+            802.3ad ae1;
+        }
+    }
     ae1 {
         esi {
             auto-derive {
-                lacp-pe-system-id-and-admin-key;
+                type-1-lacp;
             }
             all-active;
         }
         aggregated-ether-options {
             lacp {
                 active;
-                system-id 00:00:00:00:22:33;
+                system-id 00:00:00:00:44:55;
             }
         }
         unit 0 {
             family ethernet-switching {
-                interface-mode access;
+                interface-mode trunk;
                 vlan {
-                    members v30;
+                    members v250;
                 }
             }
         }
@@ -71,31 +76,52 @@ interfaces {
         unit 10 {
             family inet {
                 address 172.16.10.254/24;
+                address 172.16.10.251/24 {
+                    primary;
+                }
             }
             mac 00:00:5e:00:53:00;
         }
         unit 20 {
             family inet {
                 address 172.16.20.254/24;
+                address 172.16.20.251/24 {
+                    primary;
+                }
             }
             mac 00:00:5e:00:53:00;
         }
         unit 30 {
             family inet {
                 address 172.16.30.254/24;
+                address 172.16.30.251/24 {
+                    primary;
+                }
             }
             mac 00:00:5e:00:53:00;
         }
-    }
-    lo0 {
-        unit 0 {
+        unit 250 {
             family inet {
-                address 192.0.2.13/32;
+                address 172.16.250.4/24;
             }
         }
     }
 }
 policy-options {
+    policy-statement OSPF-EXPORT {
+        term 1 {
+            from {
+                protocol direct;
+                route-filter 172.16.10.0/24 exact;
+                route-filter 172.16.20.0/24 exact;
+                route-filter 172.16.30.0/24 exact;
+            }
+            then accept;
+        }
+        term deny-all {
+            then reject;
+        }
+    }
     policy-statement allow-loopback {
         term 1 {
             from {
@@ -120,9 +146,18 @@ routing-instances {
         protocols {
             igmp-snooping {
                 version 2;
-                vlan v10;
-                vlan v20;
-                vlan v30;
+                vlan v10 {
+                    proxy;
+                }
+                vlan v20 {
+                    proxy;
+                }
+                vlan v30 {
+                    proxy;
+                }
+                vlan v250 {
+                    proxy;
+                }
             }
             evpn {
                 encapsulation vxlan;
@@ -132,11 +167,11 @@ routing-instances {
         }
         vtep-source-interface lo0.0;
         service-type vlan-aware;
+        interface ge-0/0/2.0;
         interface ge-0/0/3.0;
-        interface ge-0/0/4.0;
         interface ae1.0;
-        route-distinguisher 192.0.2.13:1;
-        vrf-target target:1:1;          
+        route-distinguisher 192.0.2.14:1;
+        vrf-target target:1:1;
         vlans {
             v10 {
                 vlan-id 10;
@@ -146,10 +181,17 @@ routing-instances {
                 }
             }
             v20 {
-                vlan-id 20;
+                vlan-id 20;             
                 l3-interface irb.20;
                 vxlan {
                     vni 10020;
+                }
+            }
+            v250 {
+                vlan-id 250;
+                l3-interface irb.250;
+                vxlan {
+                    vni 10250;
                 }
             }
             v30 {
@@ -174,17 +216,48 @@ routing-instances {
                     vni 10500;
                 }
             }
+            ospf {
+                area 0.0.0.0 {
+                    interface irb.250;
+                }
+                export OSPF-EXPORT;
+            }
+            pim {
+                family inet;
+                rp {
+                    static {
+                        address 192.0.2.250;
+                    }
+                }
+                interface irb.10 {
+                    mode sparse;
+                    priority 500;
+                }
+                interface irb.20 {
+                    mode sparse;
+                    priority 500;
+                }
+                interface irb.30 {
+                    mode sparse;
+                    priority 500;
+                }
+                interface irb.250 {
+                    mode sparse;
+                    priority 250;
+                }
+            }
         }
         interface irb.10;
         interface irb.20;
         interface irb.30;
-        route-distinguisher 192.0.2.13:500;
+        interface irb.250;
+        route-distinguisher 192.0.2.14:500;
         vrf-target target:500:500;
     }
 }
 routing-options {                       
-    router-id 192.0.2.13;
-    autonomous-system 65413;
+    router-id 192.0.2.14;
+    autonomous-system 65414;
     forwarding-table {
         export ecmp;
     }
@@ -199,13 +272,13 @@ protocols {
             export allow-loopback;
             peer-as 65500;
             multipath;
-            neighbor 198.51.100.9;
-            neighbor 198.51.100.11;
+            neighbor 198.51.100.13;
+            neighbor 198.51.100.15;
         }
         group overlay {
             type external;
             multihop;
-            local-address 192.0.2.13;
+            local-address 192.0.2.14;
             family evpn {
                 signaling;
             }

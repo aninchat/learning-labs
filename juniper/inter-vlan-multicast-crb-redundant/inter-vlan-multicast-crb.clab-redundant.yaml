@@ -1,4 +1,4 @@
-name: juniper-inter-vlan-multicast-external-mrouter
+name: juniper-inter-vlan-multicast-crb-redundant
 prefix: ""
 mgmt:
   network: clab_mgmt
@@ -22,7 +22,8 @@ topology:
     leaf3:
     leaf4:
     leaf5:
-    rtr:
+    rtr1:
+    rtr2:
     src:
       kind: linux
       image: ostinato/ostinato:v1.3.0-1
@@ -86,7 +87,6 @@ topology:
     - endpoints: ["leaf1:eth3", "src:eth1"]
     - endpoints: ["leaf1:eth4", "rcv1:eth1"]
     - endpoints: ["leaf1:eth5", "rcv2:eth1"]
-    - endpoints: ["leaf3:eth5", "rcv6:eth1"] #remove later
       # ESI LAG rcv to leaf2/leaf3
     - endpoints: ["leaf2:eth3", "rcv3:eth1"]
     - endpoints: ["leaf2:eth4", "src:eth2"]
@@ -96,5 +96,8 @@ topology:
     - endpoints: ["leaf4:eth3", "rcv5:eth1"]
     - endpoints: ["leaf4:eth4", "src:eth3"]
       # external mrouter and src behind it
-    - endpoints: ["leaf5:eth3", "rtr:eth1"]
-    - endpoints: ["rtr:eth2", "src:eth4"]
+    - endpoints: ["leaf4:eth6", "rtr1:eth1"]
+    - endpoints: ["leaf5:eth6", "rtr1:eth2"]
+    - endpoints: ["rtr1:eth3", "rtr2:eth1"]
+    - endpoints: ["rtr2:eth2", "src:eth4"]
+    - endpoints: ["rtr2:eth3", "rcv6:eth1"]

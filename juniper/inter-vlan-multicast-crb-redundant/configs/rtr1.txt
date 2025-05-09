@@ -1,0 +1,104 @@
+chassis {
+    aggregated-devices {
+        ethernet {
+            device-count 1;
+        }
+    }
+    fpc 0 {
+        pic 0 {
+            tunnel-services;
+        }
+    }
+}
+interfaces {
+    ge-0/0/0 {
+        ether-options {
+            802.3ad ae1;
+        }
+    }
+    ge-0/0/1 {
+        ether-options {
+            802.3ad ae1;
+        }
+    }
+    ge-0/0/2 {
+        unit 0 {
+            family inet {
+                address 172.16.100.5/31;
+            }                           
+        }
+    }
+    ae1 {
+        aggregated-ether-options {
+            lacp {
+                active;
+                system-id 00:00:00:00:00:11;
+            }
+        }
+        unit 0 {
+            family ethernet-switching {
+                interface-mode trunk;
+                vlan {
+                    members v250;
+                }
+            }
+        }
+    }
+    irb {
+        unit 250 {
+            family inet {
+                address 172.16.250.250/24;
+            }
+        }
+    }
+    lo0 {
+        unit 0 {
+            family inet {
+                address 192.0.2.250/32;
+            }
+        }
+    }
+}
+protocols {
+    ospf {
+        area 0.0.0.0 {
+            interface ge-0/0/2.0 {
+                interface-type p2p;
+            }
+            interface lo0.0 {
+                interface-type p2p;
+                passive;
+            }
+            interface irb.250;
+        }
+    }
+    pim {
+        family inet;
+        rp {
+            local {
+                address 192.0.2.250;
+            }
+        }
+        interface ge-0/0/2.0 {
+            mode sparse;
+        }
+        interface lo0.0 {
+            mode sparse;
+        }
+        interface irb.250 {
+            mode sparse;
+        }
+    }
+    lldp {
+        interface all;
+    }
+    igmp-snooping {
+        vlan all;
+    }
+}
+vlans {
+    v250 {
+        vlan-id 250;
+        l3-interface irb.250;
+    }
+}

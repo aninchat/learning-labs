@@ -49,6 +49,9 @@ protocols {
     lldp {
         interface all;
     }
+    igmp-snooping {
+        vlan all;
+    }
 }
 vlans {
     v10 {
