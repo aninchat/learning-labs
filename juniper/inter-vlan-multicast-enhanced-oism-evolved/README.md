@@ -7,4 +7,4 @@ This lab deploys an ERB-based EVPN VXLAN fabric with symmetric routing for unica
 
 The topology is shown below. The username/password for vJunos-switch nodes is `admin/admin@123` and the username/password for the servers is `user/multit00l`.
 
-![inter-vlan-multicast-external-mrouter-topology](/static/images/juniper-inter-subnet-multicast-enhanced-oism.png)
+![inter-vlan-multicast-enhanced-oism-topology](/static/images/juniper-inter-subnet-multicast-enhanced-oism.png)
