@@ -1,0 +1,216 @@
+chassis {
+    aggregated-devices {
+        ethernet {
+            device-count 1;
+        }
+    }
+    fpc 0 {
+        pic 0 {
+            tunnel-services;
+        }
+    }
+}
+interfaces {
+    et-0/0/0 {
+        unit 0 {
+            family inet {
+                address 198.51.100.16/31;
+            }
+        }
+    }
+    et-0/0/1 {
+        unit 0 {
+            family inet {
+                address 198.51.100.18/31;
+            }
+        }
+    }
+    et-0/0/4 {                          
+        disable;
+        unit 0 {
+            family inet {
+                address 172.16.1.2/31;
+            }
+        }
+    }
+    irb {
+        unit 100 {
+            family inet {
+                address 172.16.100.252/24 {
+                    primary;
+                }
+                address 172.16.100.254/24;
+            }
+        }
+    }
+    lo0 {
+        unit 0 {
+            family inet {
+                address 192.0.2.15/32;
+            }
+        }
+    }
+}
+forwarding-options {
+    tunnel-termination;
+    multicast-replication {
+        evpn {
+            irb enhanced-oism;
+        }
+    }
+}
+policy-options {
+    policy-statement allow-loopback {
+        term 1 {
+            from {
+                protocol direct;
+                route-filter 192.0.2.0/24 orlonger;
+            }
+            then accept;
+        }
+        term deny-all {
+            then reject;                
+        }
+    }
+    policy-statement ecmp {
+        then {
+            load-balance per-flow;
+        }
+    }
+    policy-statement pim-from-external-rp {
+        term external-rp {
+            from {
+                route-filter 172.16.1.0/24 orlonger;
+            }
+            then accept;
+        }
+        term reject {
+            then reject;
+        }
+    }
+}
+routing-instances {
+    macvrf-1 {
+        instance-type mac-vrf;
+        protocols {
+            igmp-snooping {
+                version 2;
+                vlan all {
+                    proxy;
+                }
+            }
+            evpn {
+                encapsulation vxlan;
+                extended-vni-list all;
+                vni-options {
+                    vni 100 {
+                        vrf-target target:100:100;
+                    }
+                }
+            }
+        }
+        vtep-source-interface lo0.0;
+        service-type vlan-aware;
+        route-distinguisher 192.0.2.15:1;
+        vrf-target target:1:1;
+        vlans {
+            v100 {
+                description SBD;
+                vlan-id 100;
+                l3-interface irb.100;
+                vxlan {
+                    vni 100;
+                }
+            }
+        }                               
+    }
+    vrf1 {
+        instance-type vrf;
+        routing-options {
+            multipath;
+        }
+        protocols {
+            evpn {
+                ip-prefix-routes {
+                    advertise direct-nexthop;
+                    encapsulation vxlan;
+                    vni 10050;
+                }
+                oism {
+                    supplemental-bridge-domain-irb irb.100;
+                    pim-evpn-gateway;
+                }
+            }
+            ospf {
+                area 0.0.0.0 {
+                    interface irb.100;
+                    interface et-0/0/4.0 {
+                        interface-type p2p;
+                    }
+                }
+            }
+            pim {
+                rp {
+                    static {
+                        address 192.0.2.250;
+                    }
+                }
+                interface irb.100 {
+                    accept-remote-source;
+                }
+                interface et-0/0/4.0;
+            }
+        }
+        interface et-0/0/4.0;
+        interface irb.100;
+        route-distinguisher 192.0.2.15:50;
+        vrf-target target:50:50;
+    }
+}
+routing-options {
+    router-id 192.0.2.15;
+    autonomous-system 65415;
+    forwarding-table {
+        export ecmp;
+    }
+}
+protocols {
+    bgp {
+        group underlay {
+            type external;
+            family inet {
+                unicast;
+            }
+            export allow-loopback;
+            peer-as 65500;
+            multipath;
+            neighbor 198.51.100.17;
+            neighbor 198.51.100.19;
+        }
+        group overlay {
+            type external;
+            multihop;
+            local-address 192.0.2.15;
+            family evpn {
+                signaling;
+            }
+            peer-as 65500;
+            neighbor 192.0.2.101;
+            neighbor 192.0.2.102;
+        }
+    }
+    igmp {
+        interface irb.10;
+        interface irb.20;
+        interface irb.30;
+        interface irb.100;
+    }
+    lldp {
+        interface all;
+    }
+}
+multicast-snooping-options {
+    oism {
+        install-star-g-routes;
+    }
+}

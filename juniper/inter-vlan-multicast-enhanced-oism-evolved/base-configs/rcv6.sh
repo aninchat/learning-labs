@@ -1,0 +1,1 @@
+ip addr add 172.16.250.6/24 dev eth1
