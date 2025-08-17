@@ -1,0 +1,59 @@
+name: nxos-bridged-overlay
+prefix: ""
+mgmt:
+  network: clab_mgmt
+  ipv4-subnet: 172.21.21.0/24
+topology:
+  defaults:
+    kind: cisco_n9kv
+  kinds:
+    cisco_n9kv:
+      image: vrnetlab/cisco_n9kv:9300-10.5.3.F
+      startup-config: configs/__clabNodeName__.txt
+    linux:
+      image: ghcr.io/srl-labs/network-multitool
+      binds:
+        - base-configs:/base-configs
+  nodes:
+    spine1:
+    spine2:
+    leaf1:
+    leaf2:
+    leaf3:
+    leaf4:
+    leaf5:
+    s1:
+      kind: linux
+      exec:
+        - bash base-configs/s1.sh
+    s2:
+      kind: linux
+      exec:
+        - bash base-configs/s2.sh
+    s3:
+      kind: linux
+      exec:
+        - bash base-configs/s3.sh
+    s4:
+      kind: linux
+      exec:
+        - bash base-configs/s4.sh
+  links:
+    - endpoints: ["leaf1:Ethernet1/1", "spine1:Ethernet1/1"]
+    - endpoints: ["leaf1:Ethernet1/2", "spine2:Ethernet1/1"]
+    - endpoints: ["leaf2:Ethernet1/1", "spine1:Ethernet1/2"]
+    - endpoints: ["leaf2:Ethernet1/2", "spine2:Ethernet1/2"]
+    - endpoints: ["leaf3:Ethernet1/1", "spine1:Ethernet1/3"]
+    - endpoints: ["leaf3:Ethernet1/2", "spine2:Ethernet1/3"]
+    - endpoints: ["leaf4:Ethernet1/1", "spine1:Ethernet1/4"]
+    - endpoints: ["leaf4:Ethernet1/2", "spine2:Ethernet1/4"]
+    - endpoints: ["leaf5:Ethernet1/1", "spine1:Ethernet1/5"]
+    - endpoints: ["leaf5:Ethernet1/2", "spine2:Ethernet1/5"]
+    - endpoints: ["leaf2:Ethernet1/10", "leaf3:Ethernet1/10"]
+    - endpoints: ["leaf2:Ethernet1/11", "leaf3:Ethernet1/11"]
+    - endpoints: ["leaf2:Ethernet1/12", "leaf3:Ethernet1/12"]
+    - endpoints: ["leaf1:Ethernet1/3", "s1:eth1"]
+    - endpoints: ["leaf2:Ethernet1/3", "s2:eth1"]
+    - endpoints: ["leaf3:Ethernet1/3", "s2:eth2"]
+    - endpoints: ["leaf4:Ethernet1/3", "s3:eth1"]
+    - endpoints: ["leaf5:Ethernet1/3", "s4:eth1"]

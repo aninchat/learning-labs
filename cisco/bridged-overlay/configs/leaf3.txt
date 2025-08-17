@@ -1,0 +1,105 @@
+nv overlay evpn
+feature bgp
+feature vn-segment-vlan-based
+feature lacp
+feature vpc
+feature lldp
+feature nv overlay
+!
+hardware access-list tcam region racl 0
+hardware access-list tcam region vacl 0
+hardware access-list tcam region arp-ether 256 double-wide
+!
+vlan 10
+  vn-segment 10010
+!
+ip prefix-list loopback0 seq 5 permit 192.0.2.0/24 eq 32 
+route-map allow-loopback permit 10
+  match ip address prefix-list loopback0 
+!
+vrf context vpc-keepalive
+  address-family ipv4 unicast
+interface Ethernet1/10
+  no switchport
+  vrf member vpc-keepalive
+  ip address 203.0.113.1/31
+  no shutdown
+interface Ethernet1/11
+  channel-group 100 mode active
+  no shutdown
+interface Ethernet1/12
+  channel-group 100 mode active
+  no shutdown
+vpc domain 1
+  peer-switch
+  peer-keepalive destination 203.0.113.0 source 203.0.113.1 vrf vpc-keepalive
+  peer-gateway
+  ip arp synchronize
+interface port-channel100
+  switchport mode trunk
+  spanning-tree port type network
+  vpc peer-link
+  vpc orphan-ports suspend
+  no shutdown
+!
+interface Ethernet1/1
+  no switchport
+  ip address 198.51.100.8/31
+  no shutdown
+interface Ethernet1/2
+  no switchport
+  ip address 198.51.100.10/31
+  no shutdown
+interface Ethernet1/3
+  channel-group 1 mode active
+interface port-channel1
+  switchport access vlan 10
+  vpc 1
+interface loopback0
+  ip address 192.0.2.13/32
+  ip address 192.0.2.50/32 secondary
+!
+boot nxos bootflash:/nxos64-cs.10.5.3.F.bin
+!
+router bgp 65413
+  router-id 192.0.2.13
+  log-neighbor-changes
+  address-family ipv4 unicast
+    redistribute direct route-map allow-loopback
+    maximum-paths 2
+  address-family l2vpn evpn
+    maximum-paths 64
+  template peer spine-overlay
+    remote-as 65500
+    update-source loopback0
+    ebgp-multihop 2
+    address-family l2vpn evpn
+      send-community
+      send-community extended
+  template peer spine-underlay
+    address-family ipv4 unicast
+  neighbor 192.0.2.101
+    inherit peer spine-overlay
+  neighbor 192.0.2.102
+    inherit peer spine-overlay
+  neighbor 198.51.100.9
+    inherit peer spine-underlay
+    remote-as 65500
+  neighbor 198.51.100.11
+    inherit peer spine-underlay
+    remote-as 65500
+!
+evpn
+  vni 10010 l2
+    rd auto
+    route-target import 10:10
+    route-target export 10:10
+!
+interface nve1
+  no shutdown
+  host-reachability protocol bgp
+  source-interface loopback0
+  member vni 10010
+    suppress-arp
+    ingress-replication protocol bgp
+!

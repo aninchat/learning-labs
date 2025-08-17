@@ -1,0 +1,101 @@
+nv overlay evpn
+feature bgp
+feature fabric forwarding
+feature interface-vlan
+feature vn-segment-vlan-based
+feature lldp
+feature nv overlay
+!
+hardware access-list tcam region racl 0
+hardware access-list tcam region arp-ether 256 double-wide
+!
+fabric forwarding anycast-gateway-mac 000a.000a.000a
+!
+vlan 30
+  vn-segment 10030
+vlan 500
+  vn-segment 10500
+!
+ip prefix-list loopback0 seq 5 permit 192.0.2.0/24 eq 32 
+route-map allow-loopback permit 10
+  match ip address prefix-list loopback0 
+route-map permit-all permit 10
+!
+vrf context tenant1
+  vni 10500
+  rd auto
+  address-family ipv4 unicast
+    route-target import 500:500
+    route-target import 500:500 evpn
+    route-target export 500:500
+    route-target export 500:500 evpn
+!
+interface Vlan30
+  no shutdown
+  vrf member tenant1
+  ip address 172.16.30.254/24
+  fabric forwarding mode anycast-gateway
+interface Vlan500
+  no shutdown
+  vrf member tenant1
+  ip forward
+!
+interface nve1
+  no shutdown
+  host-reachability protocol bgp
+  source-interface loopback0
+  member vni 10030
+    suppress-arp
+    ingress-replication protocol bgp
+  member vni 10500 associate-vrf
+!
+interface Ethernet1/1
+  no switchport
+  ip address 198.51.100.16/31
+  no shutdown
+interface Ethernet1/2
+  no switchport
+  ip address 198.51.100.18/31
+  no shutdown
+interface Ethernet1/3
+  switchport access vlan 30
+interface loopback0
+  ip address 192.0.2.15/32
+!
+boot nxos bootflash:/nxos64-cs.10.5.3.F.bin 
+!
+router bgp 65415
+  router-id 192.0.2.15
+  log-neighbor-changes
+  address-family ipv4 unicast
+    redistribute direct route-map allow-loopback
+    maximum-paths 2
+  address-family l2vpn evpn
+    maximum-paths 64
+  template peer spine-overlay
+    remote-as 65500
+    update-source loopback0
+    ebgp-multihop 2
+    address-family l2vpn evpn
+      send-community
+      send-community extended
+  template peer spine-underlay
+    address-family ipv4 unicast
+  neighbor 192.0.2.101
+    inherit peer spine-overlay
+  neighbor 192.0.2.102
+    inherit peer spine-overlay
+  neighbor 198.51.100.17
+    inherit peer spine-underlay
+    remote-as 65500
+  neighbor 198.51.100.19
+    inherit peer spine-underlay
+    remote-as 65500
+  vrf tenant1
+    address-family ipv4 unicast
+      redistribute direct route-map permit-all
+evpn
+  vni 10030 l2
+    rd auto
+    route-target import 30:30
+    route-target export 30:30
