@@ -39,6 +39,7 @@ router bgp 65500
   log-neighbor-changes
   address-family ipv4 unicast
     redistribute direct route-map allow-loopback
+    maximum-paths 2
   address-family l2vpn evpn
     retain route-target all
   template peer leaf-overlay

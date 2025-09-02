@@ -23,16 +23,16 @@ interface Ethernet1/3
   no shutdown
 interface Ethernet1/4
   no switchport
-  ip address 198.51.100.15/31
+  ip address 198.51.100.28/31
   no shutdown
 interface Ethernet1/5
   no switchport
-  ip address 198.51.100.19/31
+  ip address 198.51.100.30/31
   no shutdown
 interface loopback0
   ip address 192.0.2.102/32
 !
-boot nxos bootflash:/nxos64-cs.10.5.3.F.bin
+boot nxos bootflash:/nxos64-cs.10.6.1.F.bin
 !
 router bgp 65500
   router-id 192.0.2.102
@@ -60,12 +60,12 @@ router bgp 65500
   neighbor 192.0.2.13
     inherit peer leaf-overlay
     remote-as 65413
-  neighbor 192.0.2.14
+  neighbor 192.0.2.201
     inherit peer leaf-overlay
-    remote-as 65414
-  neighbor 192.0.2.15
+    remote-as 65501
+  neighbor 192.0.2.202
     inherit peer leaf-overlay
-    remote-as 65415
+    remote-as 65501
   neighbor 198.51.100.2
     inherit peer leaf-underlay
     remote-as 65411
@@ -75,9 +75,9 @@ router bgp 65500
   neighbor 198.51.100.10
     inherit peer leaf-underlay
     remote-as 65413
-  neighbor 198.51.100.14
+  neighbor 198.51.100.29
     inherit peer leaf-underlay
-    remote-as 65414
-  neighbor 198.51.100.18
+    remote-as 65501
+  neighbor 198.51.100.31
     inherit peer leaf-underlay
-    remote-as 65415
+    remote-as 65501

@@ -1,0 +1,70 @@
+name: nxos-junos-evpn-hybrid-mode
+prefix: ""
+mgmt:
+  network: clab_mgmt
+  ipv4-subnet: 172.21.21.0/24
+topology:
+  defaults:
+    kind: cisco_n9kv
+  kinds:
+    cisco_n9kv:
+      image: aninchat/n9kv:9300v64-10.6.1.F
+      startup-config: configs/__clabNodeName__.txt
+    juniper_vjunosswitch:
+      image: aninchat/vjunos-switch:24.4R1.9
+      startup-config: configs/__clabNodeName__.txt
+    linux:
+      image: ghcr.io/srl-labs/network-multitool
+      binds:
+        - base-configs:/base-configs
+  nodes:
+    spine1:
+    spine2:
+      kind: juniper_vjunosswitch
+    leaf1:
+    leaf2:
+    leaf3:
+    leaf4:
+      kind: juniper_vjunosswitch
+    leaf5:
+      kind: juniper_vjunosswitch
+    leaf6:
+      kind: juniper_vjunosswitch
+    s1:
+      kind: linux
+      exec:
+        - bash base-configs/s1.sh
+    s2:
+      kind: linux
+      exec:
+        - bash base-configs/s2.sh
+    s3:
+      kind: linux
+      exec:
+        - bash base-configs/s3.sh
+    s4:
+      kind: linux
+      exec:
+        - bash base-configs/s4.sh
+  links:
+    - endpoints: ["leaf1:Ethernet1/1", "spine1:Ethernet1/1"]
+    - endpoints: ["leaf1:Ethernet1/2", "spine2:eth1"]
+    - endpoints: ["leaf2:Ethernet1/1", "spine1:Ethernet1/2"]
+    - endpoints: ["leaf2:Ethernet1/2", "spine2:eth2"]
+    - endpoints: ["leaf3:Ethernet1/1", "spine1:Ethernet1/3"]
+    - endpoints: ["leaf3:Ethernet1/2", "spine2:eth3"]
+    - endpoints: ["leaf4:eth1", "spine1:Ethernet1/4"]
+    - endpoints: ["leaf4:eth2", "spine2:eth4"]
+    - endpoints: ["leaf5:eth1", "spine1:Ethernet1/5"]
+    - endpoints: ["leaf5:eth2", "spine2:eth5"]
+    - endpoints: ["leaf6:eth1", "spine1:Ethernet1/6"]
+    - endpoints: ["leaf6:eth2", "spine2:eth6"]
+    - endpoints: ["leaf2:Ethernet1/10", "leaf3:Ethernet1/10"]
+    - endpoints: ["leaf2:Ethernet1/11", "leaf3:Ethernet1/11"]
+    - endpoints: ["leaf2:Ethernet1/12", "leaf3:Ethernet1/12"]
+    - endpoints: ["leaf1:Ethernet1/3", "s1:eth1"]
+    - endpoints: ["leaf2:Ethernet1/3", "s2:eth1"]
+    - endpoints: ["leaf3:Ethernet1/3", "s2:eth2"]
+    - endpoints: ["leaf4:eth3", "s3:eth1"]
+    - endpoints: ["leaf5:eth3", "s4:eth1"]
+    - endpoints: ["leaf6:eth3", "s4:eth2"]

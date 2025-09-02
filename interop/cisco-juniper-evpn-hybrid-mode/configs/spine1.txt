@@ -11,31 +11,35 @@ route-map next-hop-self permit 10
 !
 interface Ethernet1/1
   no switchport
-  ip address 198.51.100.3/31
+  ip address 198.51.100.1/31
   no shutdown
 interface Ethernet1/2
   no switchport
-  ip address 198.51.100.7/31
+  ip address 198.51.100.5/31
   no shutdown
 interface Ethernet1/3
   no switchport
-  ip address 198.51.100.11/31
+  ip address 198.51.100.9/31
   no shutdown
 interface Ethernet1/4
   no switchport
-  ip address 198.51.100.15/31
+  ip address 198.51.100.13/31
   no shutdown
 interface Ethernet1/5
   no switchport
-  ip address 198.51.100.19/31
+  ip address 198.51.100.17/31
+  no shutdown
+interface Ethernet1/6
+  no switchport
+  ip address 198.51.100.21/31
   no shutdown
 interface loopback0
-  ip address 192.0.2.102/32
+  ip address 192.0.2.101/32
 !
 boot nxos bootflash:/nxos64-cs.10.5.3.F.bin
 !
 router bgp 65500
-  router-id 192.0.2.102
+  router-id 192.0.2.101
   log-neighbor-changes
   address-family ipv4 unicast
     redistribute direct route-map allow-loopback
@@ -66,18 +70,24 @@ router bgp 65500
   neighbor 192.0.2.15
     inherit peer leaf-overlay
     remote-as 65415
-  neighbor 198.51.100.2
+  neighbor 192.0.2.16
+    inherit peer leaf-overlay
+    remote-as 65416
+  neighbor 198.51.100.0
     inherit peer leaf-underlay
     remote-as 65411
-  neighbor 198.51.100.6
+  neighbor 198.51.100.4
     inherit peer leaf-underlay
     remote-as 65412
-  neighbor 198.51.100.10
+  neighbor 198.51.100.8
     inherit peer leaf-underlay
     remote-as 65413
-  neighbor 198.51.100.14
+  neighbor 198.51.100.12
     inherit peer leaf-underlay
     remote-as 65414
-  neighbor 198.51.100.18
+  neighbor 198.51.100.16
     inherit peer leaf-underlay
     remote-as 65415
+  neighbor 198.51.100.20
+    inherit peer leaf-underlay
+    remote-as 65416

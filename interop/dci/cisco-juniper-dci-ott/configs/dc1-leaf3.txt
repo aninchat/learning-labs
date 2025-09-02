@@ -1,0 +1,134 @@
+nv overlay evpn
+feature bgp
+feature fabric forwarding
+feature interface-vlan
+feature vn-segment-vlan-based
+feature lldp
+feature nv overlay
+feature vpc
+feature lacp
+!
+fabric forwarding anycast-gateway-mac 0000.5e00.5300
+!
+hardware access-list tcam region racl 0
+hardware access-list tcam region arp-ether 256 double-wide
+!
+vlan 10
+  vn-segment 10010
+vlan 500
+  vn-segment 10500
+!
+vrf context vpc-keepalive
+  address-family ipv4 unicast
+vrf context tenant1
+  vni 10500
+  rd auto
+  address-family ipv4 unicast
+    route-target import 500:500
+    route-target import 500:500 evpn
+    route-target export 500:500
+    route-target export 500:500 evpn
+!
+interface Vlan10
+  no shutdown
+  vrf member tenant1
+  ip address 172.16.10.254/24
+  fabric forwarding mode anycast-gateway
+interface Vlan500
+  no shutdown
+  vrf member tenant1
+  ip forward
+interface nve1
+  no shutdown
+  host-reachability protocol bgp
+  source-interface loopback0
+  member vni 10010
+    suppress-arp
+    ingress-replication protocol bgp
+  member vni 10500 associate-vrf
+!
+interface Ethernet1/10
+  no switchport
+  vrf member vpc-keepalive
+  ip address 203.0.113.1/31
+  no shutdown
+interface Ethernet1/11
+  channel-group 100 mode active
+  no shutdown
+interface Ethernet1/12
+  channel-group 100 mode active
+  no shutdown
+vpc domain 1
+  peer-switch
+  peer-keepalive destination 203.0.113.0 source 203.0.113.1 vrf vpc-keepalive
+  peer-gateway
+  ip arp synchronize
+interface port-channel100
+  switchport mode trunk
+  spanning-tree port type network
+  vpc peer-link
+  no shutdown
+!
+interface Ethernet1/1
+  no switchport
+  ip address 198.51.100.8/31
+  no shutdown
+interface Ethernet1/2
+  no switchport
+  ip address 198.51.100.10/31
+  no shutdown
+interface Ethernet1/3
+  channel-group 1 mode active
+  no shutdown
+interface port-channel1
+  switchport access vlan 10
+  vpc 1
+  no shutdown
+interface loopback0
+  ip address 192.0.2.13/32
+  ip address 192.0.2.50/32 secondary
+  no shutdown
+!
+boot nxos bootflash:/nxos64-cs.10.6.1.F.bin
+!
+ip prefix-list loopback0 seq 5 permit 192.0.2.0/24 eq 32 
+route-map allow-loopback permit 10
+  match ip address prefix-list loopback0
+route-map permit-all permit 10
+router bgp 65413
+  router-id 192.0.2.13
+  log-neighbor-changes
+  address-family ipv4 unicast
+    redistribute direct route-map allow-loopback
+    maximum-paths 2
+  address-family l2vpn evpn
+    maximum-paths 64
+  template peer spine-overlay
+    remote-as 65500
+    update-source loopback0
+    ebgp-multihop 2
+    address-family l2vpn evpn
+      send-community
+      send-community extended
+  template peer spine-underlay
+    address-family ipv4 unicast
+  neighbor 192.0.2.101
+    inherit peer spine-overlay
+  neighbor 192.0.2.102
+    inherit peer spine-overlay
+  neighbor 198.51.100.9
+    inherit peer spine-underlay
+    remote-as 65500
+  neighbor 198.51.100.11
+    inherit peer spine-underlay
+    remote-as 65500
+  vrf tenant1
+    address-family ipv4 unicast
+      redistribute direct route-map permit-all
+!
+evpn
+  vni 10010 l2
+    rd auto
+    route-target import 10:10
+    route-target export 10:10
+!
