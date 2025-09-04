@@ -8,7 +8,7 @@ topology:
     kind: cisco_n9kv
   kinds:
     cisco_n9kv:
-      image: aninchat/n9kv:9300v64-10.6.1.F
+      image: vrnetlab/cisco_n9kv:9300v64-10.6.1.F
       startup-config: configs/__clabNodeName__.txt
     juniper_vjunosswitch:
       image: aninchat/vjunos-switch:24.4R1.9
