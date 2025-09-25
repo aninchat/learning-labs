@@ -3,9 +3,13 @@ This lab deploys an EVPN VXLAN fabric with a mix of Cisco N9Kv and Juniper Junos
 > [!IMPORTANT]
 > I try to keep these labs as low-effort for the consumer as possible. However, unlike vJunos from Juniper, N9Kv requires a login on cisco.com to download and use. For that reason, I am choosing not to host the docker container directly and you will need to build the container using the `vrnetlab` project to use this lab. Instructions on how to build it is demonstrated below.
 
+> [!Note]
+> EVPN Hybrid mode does not work for endpoints behind ethernet segments. As of 10.6.1(F), this is confirmed by Cisco engineering as not supported and day-1 behavior.
+
 The topology is shown below. The username/password for N9kv nodes is `admin/admin` and the username/password for the servers is `user/multit00l`.
 
 ![cisco-juniper-evpn-hybrid-mode](/static/images/cisco-juniper-evpn-hybrid-mode.png)
+
 
 # Building the N9Kv docker container
 
