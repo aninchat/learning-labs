@@ -10,7 +10,6 @@ The topology is shown below. The username/password for cEOS nodes is `admin/admi
 # Importing the cEOS docker container
 
 On arista.com, navigate to Support -> Software Download -> All downloads. On this page, scroll down and you will find all cEOS and vEOS images available to download. Download the `cEOS64-lab-4.34.2.1F.tar.xz` file and upload to your server. Now you can import it using `docker import cEOS64-lab-4.34.2.1F.tar.xz ceos:4.34.2.1F`.
-```
 
 Once the image is imported, you should see the container using `docker images`:
 
