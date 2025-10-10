@@ -1,0 +1,58 @@
+name: eos-bridged-overlay
+prefix: ""
+mgmt:
+  network: clab_mgmt
+  ipv4-subnet: 172.21.21.0/24
+topology:
+  defaults:
+    kind: arista_ceos
+  kinds:
+    arista_ceos:
+      image: ceos:4.34.2.1F
+      startup-config: configs/__clabNodeName__.conf
+    linux:
+      image: ghcr.io/srl-labs/network-multitool
+      binds:
+        - base-configs:/base-configs
+  nodes:
+    spine1:
+    spine2:
+    leaf1:
+    leaf2:
+    leaf3:
+    leaf4:
+    leaf5:
+    s1:
+      kind: linux
+      exec:
+        - bash base-configs/s1.sh
+    s2:
+      kind: linux
+      exec:
+        - bash base-configs/s2.sh
+    s3:
+      kind: linux
+      exec:
+        - bash base-configs/s3.sh
+    s4:
+      kind: linux
+      exec:
+        - bash base-configs/s4.sh
+  links:
+    - endpoints: ["leaf1:eth1", "spine1:eth1"]
+    - endpoints: ["leaf1:eth2", "spine2:eth1"]
+    - endpoints: ["leaf2:eth1", "spine1:eth2"]
+    - endpoints: ["leaf2:eth2", "spine2:eth2"]
+    - endpoints: ["leaf3:eth1", "spine1:eth3"]
+    - endpoints: ["leaf3:eth2", "spine2:eth3"]
+    - endpoints: ["leaf4:eth1", "spine1:eth4"]
+    - endpoints: ["leaf4:eth2", "spine2:eth4"]
+    - endpoints: ["leaf5:eth1", "spine1:eth5"]
+    - endpoints: ["leaf5:eth2", "spine2:eth5"]
+    - endpoints: ["leaf2:eth10", "leaf3:eth10"]
+    - endpoints: ["leaf2:eth11", "leaf3:eth11"]
+    - endpoints: ["leaf1:eth3", "s1:eth1"]
+    - endpoints: ["leaf2:eth3", "s2:eth1"]
+    - endpoints: ["leaf3:eth3", "s2:eth2"]
+    - endpoints: ["leaf4:eth3", "s3:eth1"]
+    - endpoints: ["leaf5:eth3", "s4:eth1"]
