@@ -5,7 +5,7 @@ This lab deploys an EVPN VXLAN fabric with inter-VLAN routing using the asymmetr
 
 The topology is shown below. The username/password for cEOS nodes is `admin/admin` and the username/password for the servers is `admin/multit00l`.
 
-![ceos-bridged-overlay-topology](/static/images/ceos-bridged-overlay.png)
+![ceos-asymmetric-routing-topology](/static/images/ceos-asymmetric-routing.png)
 
 # Importing the cEOS docker container
 
