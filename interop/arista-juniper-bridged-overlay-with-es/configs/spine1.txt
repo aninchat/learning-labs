@@ -1,0 +1,97 @@
+!
+no aaa root
+!
+username admin privilege 15 role network-admin secret sha512 $6$bYEHtchCpH7iZmq9$36W12ZHijsDzTQ.ibEynShPb.QAXWLAqBrnW.vEviEv2JnY.EaajJeo72kddOG/WvIeBhRnUukAzaWQkKCN1s.
+!
+management api http-commands
+   no shutdown
+!
+no service interface inactive port-id allocation disabled
+!
+transceiver qsfp default-mode 4x10G
+!
+service routing protocols model multi-agent
+!
+hostname spine1
+!
+spanning-tree mode mstp
+!
+system l1
+   unsupported speed action error
+   unsupported error-correction action error
+!
+management api gnmi
+   transport grpc default
+!
+management api netconf
+   transport ssh default
+!
+interface Ethernet1
+   no switchport
+   ip address 198.51.100.1/31
+interface Ethernet2
+   no switchport
+   ip address 198.51.100.5/31
+interface Ethernet3
+   no switchport
+   ip address 198.51.100.9/31
+interface Ethernet4
+   no switchport
+   ip address 198.51.100.13/31
+interface Ethernet5
+   no switchport
+   ip address 198.51.100.17/31
+interface Ethernet6
+   no switchport
+   ip address 198.51.100.21/31
+!
+interface Loopback0
+   ip address 192.0.2.101/32
+!
+ip routing
+!
+route-map allow-loopback permit 10
+   match interface Loopback0
+!
+router bgp 65500
+   router-id 192.0.2.101
+   no bgp default ipv4-unicast
+   maximum-paths 2
+   bgp additional-paths send ecmp
+   neighbor overlay peer group
+   neighbor overlay next-hop-unchanged
+   neighbor overlay update-source Loopback0
+   neighbor overlay bfd
+   neighbor overlay ebgp-multihop 2
+   neighbor overlay send-community extended
+   neighbor 198.51.100.0 remote-as 65411
+   neighbor 198.51.100.4 remote-as 65412
+   neighbor 198.51.100.8 remote-as 65413
+   neighbor 198.51.100.12 remote-as 65414
+   neighbor 198.51.100.16 remote-as 65415
+   neighbor 198.51.100.20 remote-as 65416
+   neighbor 192.0.2.11 peer group overlay
+   neighbor 192.0.2.11 remote-as 65411
+   neighbor 192.0.2.12 peer group overlay
+   neighbor 192.0.2.12 remote-as 65412
+   neighbor 192.0.2.13 peer group overlay
+   neighbor 192.0.2.13 remote-as 65413
+   neighbor 192.0.2.14 peer group overlay
+   neighbor 192.0.2.14 remote-as 65414
+   neighbor 192.0.2.15 peer group overlay
+   neighbor 192.0.2.15 remote-as 65415
+   neighbor 192.0.2.16 peer group overlay
+   neighbor 192.0.2.16 remote-as 65416
+   redistribute connected route-map allow-loopback
+   !
+   address-family evpn
+      neighbor overlay activate
+   !
+   address-family ipv4
+      neighbor 198.51.100.0 activate
+      neighbor 198.51.100.4 activate
+      neighbor 198.51.100.8 activate
+      neighbor 198.51.100.12 activate
+      neighbor 198.51.100.16 activate
+      neighbor 198.51.100.20 activate
+!
