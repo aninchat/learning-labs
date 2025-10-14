@@ -5,7 +5,7 @@ This lab deploys a bridged overlay EVPN VXLAN fabric (Layer 2 extension) using A
 
 The topology is shown below. The username/password for cEOS nodes is `admin/admin` and the username/password for the servers is `admin/multit00l`.
 
-![ceos-bridged-overlay-topology](/static/images/ceos-bridged-overlay.png)
+![ceos-bridged-overlay-with-es-topology](/static/images/ceos-bridged-overlay-with-es.png)
 
 # Importing the cEOS docker container
 
