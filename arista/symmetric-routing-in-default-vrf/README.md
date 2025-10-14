@@ -1,4 +1,4 @@
-This lab deploys an EVPN VXLAN fabric with inter-VLAN routing using the symmetric IRB routing model with Arista cEOS as leafs and spines of a 3-stage Clos architecture. You can deploy the fabric using `sudo containerlab deploy -t eos-symmetric-routing.clab.yaml -c`.
+This lab deploys an EVPN VXLAN fabric with inter-VLAN routing using the symmetric IRB routing model (in default VRF) with Arista cEOS as leafs and spines of a 3-stage Clos architecture. You can deploy the fabric using `sudo containerlab deploy -t eos-symmetric-routing-default-vrf.clab.yaml -c`.
 
 > [!IMPORTANT]
 > I try to keep these labs as low-effort for the consumer as possible. However, unlike vJunos from Juniper, cEOS requires a login on arista.com to download and use. For that reason, I am choosing not to host the docker container directly and you will need to import the container manually. Instructions on how to do this is demonstrated below.
