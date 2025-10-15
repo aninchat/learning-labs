@@ -1,11 +1,11 @@
-This lab deploys a bridged overlay EVPN VXLAN fabric with a mix of Arista cEOS and Juniper vJunos as leafs and spines in a 3-stage Clos architecture to test interoperability between them. You can deploy the fabric using `sudo containerlab deploy -t eos-juniper-bridged-overlay-with-es.clab.yaml -c`.
+This lab deploys an EVPN VXLAN fabric with a mix of Arista cEOS and Juniper vJunos as leafs and spines in a 3-stage Clos architecture with symmetric routing for routing between VLANs (VNIs). You can deploy the fabric using `sudo containerlab deploy -t eos-junos-symmetric-routing.clab.yaml -c`.
 
 > [!IMPORTANT]
 > I try to keep these labs as low-effort for the consumer as possible. However, unlike vJunos from Juniper, cEOS requires a login on arista.com to download and use. For that reason, I am choosing not to host the docker container directly and you will need to import the container manually. Instructions on how to do this is demonstrated below.
 
 The topology is shown below. The username/password for EOS nodes is `admin/admin`, the username/password for vJunos nodes is `admin/admin@123` and the username/password for the servers is `admin/multit00l`.
 
-![eos-juniper-bridged-overlay-with-es](/static/images/eos-junos-bridged-overlay-with-es.png)
+![eos-juniper-asymmetric-routing](/static/images/eos-junos-symmetric-routing.png)
 
 # Importing the cEOS docker container
 

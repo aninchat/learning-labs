@@ -5,7 +5,7 @@ This lab deploys an EVPN VXLAN fabric with a mix of Arista cEOS and Juniper vJun
 
 The topology is shown below. The username/password for EOS nodes is `admin/admin`, the username/password for vJunos nodes is `admin/admin@123` and the username/password for the servers is `admin/multit00l`.
 
-![eos-juniper-asymmetric-routing](/static/images/eos-juniper-asymmetric-routing.png)
+![eos-juniper-asymmetric-routing](/static/images/eos-junos-asymmetric-routing.png)
 
 # Importing the cEOS docker container
 

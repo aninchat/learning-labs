@@ -5,7 +5,7 @@ This lab deploys a bridged overlay EVPN VXLAN fabric with a mix of Arista cEOS a
 
 The topology is shown below. The username/password for EOS nodes is `admin/admin`, the username/password for vJunos nodes is `admin/admin@123` and the username/password for the servers is `admin/multit00l`.
 
-![eos-juniper-bridged-overlay](/static/images/eos-juniper-bridged-overlay.png)
+![eos-juniper-bridged-overlay](/static/images/eos-junos-bridged-overlay.png)
 
 # Importing the cEOS docker container
 
