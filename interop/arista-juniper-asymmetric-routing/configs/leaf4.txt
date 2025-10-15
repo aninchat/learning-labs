@@ -1,0 +1,195 @@
+interfaces {
+    ge-0/0/0 {
+        unit 0 {
+            family inet {
+                address 198.51.100.12/31;
+            }
+        }
+    }
+    ge-0/0/1 {
+        unit 0 {
+            family inet {
+                address 198.51.100.14/31;
+            }
+        }
+    }
+    ge-0/0/2 {
+        unit 0 {
+            family ethernet-switching {
+                interface-mode access;
+                vlan {
+                    members v20;
+                }
+            }
+        }
+    }
+    irb {
+        unit 10 {
+            family inet {
+                address 172.16.10.254/24;
+            }
+            mac 00:00:5e:00:53:00;
+        }
+        unit 20 {
+            family inet {
+                address 172.16.20.254/24;
+            }
+            mac 00:00:5e:00:53:00;
+        }
+        unit 30 {
+            family inet {
+                address 172.16.30.254/24;
+            }
+            mac 00:00:5e:00:53:00;
+        }
+    }
+    lo0 {
+        unit 0 {
+            family inet {
+                address 192.0.2.14/32;
+            }
+        }
+    }
+}
+policy-options {
+    policy-statement allow-loopback {
+        term 1 {
+            from {
+                protocol direct;
+                route-filter 192.0.2.0/24 orlonger;
+            }
+            then accept;
+        }
+        term deny-all {
+            then reject;
+        }
+    }
+    policy-statement ecmp {
+        then {
+            load-balance per-flow;
+        }
+    }                                   
+}
+routing-instances {
+    macvrf-v10 {
+        instance-type mac-vrf;
+        protocols {
+            evpn {
+                encapsulation vxlan;
+                default-gateway do-not-advertise;
+                extended-vni-list 10010;
+                vni-options {
+                    vni 10010 {
+                        vrf-target target:10:10;
+                    }
+                }
+            }
+        }
+        vtep-source-interface lo0.0;
+        service-type vlan-based;
+        route-distinguisher 192.0.2.14:10;
+        vrf-target target:10:10;
+        vlans {
+            v10 {
+                vlan-id 10;
+                l3-interface irb.10;
+                vxlan {
+                    vni 10010;
+                }
+            }
+        }
+    }
+    macvrf-v20 {
+        instance-type mac-vrf;
+        protocols {
+            evpn {
+                encapsulation vxlan;
+                default-gateway do-not-advertise;
+                extended-vni-list 10020;
+                vni-options {
+                    vni 10020 {
+                        vrf-target target:20:20;
+                    }
+                }
+            }
+        }
+        vtep-source-interface lo0.0;
+        service-type vlan-based;
+        interface ge-0/0/2.0;
+        route-distinguisher 192.0.2.14:20;
+        vrf-target target:20:20;
+        vlans {
+            v20 {
+                vlan-id 20;
+                l3-interface irb.20;    
+                vxlan {
+                    vni 10020;
+                }
+            }
+        }
+    }
+    macvrf-v30 {
+        instance-type mac-vrf;
+        protocols {
+            evpn {
+                encapsulation vxlan;
+                default-gateway do-not-advertise;
+                extended-vni-list 10030;
+                vni-options {
+                    vni 10030 {
+                        vrf-target target:30:30;
+                    }
+                }
+            }
+        }
+        vtep-source-interface lo0.0;
+        service-type vlan-based;
+        route-distinguisher 192.0.2.14:30;
+        vrf-target target:30:30;
+        vlans {
+            v30 {
+                vlan-id 30;
+                l3-interface irb.30;
+                vxlan {
+                    vni 10030;
+                }
+            }
+        }
+    }
+}
+routing-options {
+    router-id 192.0.2.14;
+    autonomous-system 65414;
+    forwarding-table {
+        export ecmp;
+    }                                   
+}
+protocols {
+    bgp {
+        group underlay {
+            type external;
+            family inet {
+                unicast;
+            }
+            export allow-loopback;
+            peer-as 65500;
+            multipath;
+            neighbor 198.51.100.13;
+            neighbor 198.51.100.15;
+        }
+        group overlay {
+            type external;
+            multihop;
+            local-address 192.0.2.14;
+            family evpn {
+                signaling;
+            }
+            peer-as 65500;
+            neighbor 192.0.2.101;
+            neighbor 192.0.2.102;
+        }
+    }
+    lldp {
+        interface all;
+    }
+}

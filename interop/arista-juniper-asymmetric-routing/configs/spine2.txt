@@ -1,0 +1,147 @@
+interfaces {
+    ge-0/0/0 {
+        unit 0 {
+            family inet {
+                address 198.51.100.3/31;
+            }
+        }
+    }
+    ge-0/0/1 {
+        unit 0 {
+            family inet {
+                address 198.51.100.7/31;
+            }
+        }
+    }
+    ge-0/0/2 {
+        unit 0 {
+            family inet {
+                address 198.51.100.11/31;
+            }
+        }
+    }
+    ge-0/0/3 {
+        unit 0 {
+            family inet {
+                address 198.51.100.15/31;
+            }
+        }
+    }
+    ge-0/0/4 {
+        unit 0 {
+            family inet {
+                address 198.51.100.19/31;
+            }
+        }
+    }
+    ge-0/0/5 {
+        unit 0 {
+            family inet {
+                address 198.51.100.23/31;
+            }
+        }
+    }
+    lo0 {
+        unit 0 {
+            family inet {
+                address 192.0.2.102/32;
+            }
+        }
+    }
+}
+policy-options {
+    policy-statement allow-loopback {
+        term 1 {
+            from {
+                protocol direct;
+                route-filter 192.0.2.0/24 orlonger;
+            }
+            then accept;
+        }
+        term 2 {
+            from {
+                protocol bgp;
+                route-filter 192.0.2.0/24 orlonger;
+            }                           
+            then accept;
+        }
+        term deny-all {
+            then reject;
+        }
+    }
+    policy-statement ecmp {
+        then {
+            load-balance per-flow;
+        }
+    }
+}
+routing-options {
+    router-id 192.0.2.102;
+    autonomous-system 65500;
+    forwarding-table {
+        export ecmp;
+    }
+}
+protocols {
+    bgp {
+        group underlay {
+            type external;
+            family inet {
+                unicast;
+            }
+            export allow-loopback;
+            multipath {
+                multiple-as;
+            }
+            neighbor 198.51.100.2 {
+                peer-as 65411;
+            }
+            neighbor 198.51.100.6 {
+                peer-as 65412;
+            }
+            neighbor 198.51.100.10 {
+                peer-as 65413;
+            }
+            neighbor 198.51.100.14 {    
+                peer-as 65414;
+            }
+            neighbor 198.51.100.18 {    
+                peer-as 65415;
+            }
+            neighbor 198.51.100.22 {    
+                peer-as 65416;
+            }
+        }
+        group overlay {
+            type external;
+            multihop {
+                no-nexthop-change;
+            }
+            local-address 192.0.2.102;
+            family evpn {
+                signaling;
+            }
+            neighbor 192.0.2.11 {
+                peer-as 65411;
+            }
+            neighbor 192.0.2.12 {
+                peer-as 65412;
+            }
+            neighbor 192.0.2.13 {       
+                peer-as 65413;
+            }
+            neighbor 192.0.2.14 {
+                peer-as 65414;
+            }
+            neighbor 192.0.2.15 {
+                peer-as 65415;
+            }
+            neighbor 192.0.2.16 {
+                peer-as 65416;
+            }
+        }
+    }
+    lldp {
+        interface all;
+    }
+}
