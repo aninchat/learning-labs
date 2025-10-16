@@ -1,0 +1,101 @@
+no aaa root
+!
+username admin privilege 15 role network-admin secret sha512 $6$bYEHtchCpH7iZmq9$36W12ZHijsDzTQ.ibEynShPb.QAXWLAqBrnW.vEviEv2JnY.EaajJeo72kddOG/WvIeBhRnUukAzaWQkKCN1s.
+!
+management api http-commands
+   no shutdown
+!
+no service interface inactive port-id allocation disabled
+!
+transceiver qsfp default-mode 4x10G
+!
+service routing protocols model multi-agent
+!
+hostname leaf1
+!
+spanning-tree mode mstp
+!
+system l1
+   unsupported speed action error
+   unsupported error-correction action error
+!
+vlan 10
+!
+vrf instance tenant1
+!
+management api gnmi
+   transport grpc default
+!
+management api netconf
+   transport ssh default
+!
+interface Ethernet1
+   mtu 9000
+   no switchport
+   ip address 198.51.100.0/31
+!
+interface Ethernet2
+   mtu 9000
+   no switchport
+   ip address 198.51.100.2/31
+!
+interface Ethernet3
+   switchport access vlan 10
+!
+interface Loopback0
+   ip address 192.0.2.11/32
+!
+interface Vlan10
+   vrf tenant1
+   ip attached-host route export
+   ip address virtual 172.16.10.254/24
+!
+interface Vxlan1
+   vxlan source-interface Loopback0
+   vxlan udp-port 4789
+   vxlan vlan 10 vni 10010
+   vxlan vrf tenant1 vni 10500
+!
+ip virtual-router mac-address 00:00:5e:00:53:00
+!
+ip routing
+ip routing vrf tenant1
+!
+route-map allow-loopback permit 10
+   match interface Loopback0
+!
+router bgp 65411
+   router-id 192.0.2.11
+   no bgp default ipv4-unicast
+   maximum-paths 2
+   neighbor overlay peer group
+   neighbor overlay remote-as 65500
+   neighbor overlay update-source Loopback0
+   neighbor overlay bfd
+   neighbor overlay ebgp-multihop 2
+   neighbor overlay send-community
+   neighbor underlay peer group
+   neighbor underlay remote-as 65500
+   neighbor 192.0.2.101 peer group overlay
+   neighbor 192.0.2.102 peer group overlay
+   neighbor 198.51.100.1 peer group underlay
+   neighbor 198.51.100.3 peer group underlay
+   redistribute connected route-map allow-loopback
+   !
+   vlan 10
+      rd 192.0.2.11:10
+      route-target both 10:10
+      redistribute learned
+   !
+   address-family evpn
+      neighbor overlay activate
+   !
+   address-family ipv4
+      neighbor 198.51.100.1 activate
+      neighbor 198.51.100.3 activate
+   vrf tenant1
+      rd 192.0.2.11:500
+      route-target import evpn 500:500
+      route-target export evpn 500:500
+      redistribute connected
+      redistribute attached-host
