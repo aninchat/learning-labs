@@ -1,0 +1,144 @@
+interfaces {
+    et-0/0/0 {
+        unit 0 {
+            family inet {
+                address 198.51.100.28/31;
+            }
+        }
+    }
+    et-0/0/1 {
+        unit 0 {
+            family inet {
+                address 198.51.100.30/31;
+            }
+        }
+    }
+    et-0/0/2 {
+        unit 0 {
+            family inet {
+                address 198.51.100.34/31;
+            }
+        }
+    }
+    lo0 {
+        unit 0 {
+            family inet {
+                address 192.0.2.24/32;
+            }
+        }
+    }
+}
+forwarding-options {
+    tunnel-termination;
+}
+policy-options {
+    policy-statement allow-loopback {
+        term 1 {
+            from {
+                protocol direct;        
+                route-filter 192.0.2.0/24 orlonger;
+            }
+            then accept;
+        }
+        term deny-all {
+            then reject;
+        }
+    }
+    policy-statement ecmp {
+        then {
+            load-balance per-flow;
+        }
+    }
+}
+routing-instances {
+    macvrf-v10 {
+        instance-type mac-vrf;
+        protocols {
+            evpn {
+                encapsulation vxlan;
+                default-gateway do-not-advertise;
+                extended-vni-list 10010;
+                interconnect {
+                    vrf-target target:10:10;
+                    route-distinguisher 192.0.2.24:20010;
+                    esi {
+                        00:00:00:00:00:00:00:00:22:00;
+                        all-active;
+                    }
+                    interconnected-vni-list 10010;
+                    encapsulation vxlan;
+                }
+            }
+        }
+        vtep-source-interface lo0.0;
+        service-type vlan-based;
+        route-distinguisher 192.0.2.24:10;
+        vrf-target target:65501:10010;
+        vlans {
+            v10 {
+                vlan-id 10;
+                vxlan {
+                    vni 10010;
+                }
+            }
+        }
+    }
+}
+routing-options {
+    router-id 192.0.2.24;
+    autonomous-system 65424;
+    forwarding-table {
+        export ecmp;
+    }
+}
+protocols {
+    bgp {
+        group underlay {
+            type external;              
+            family inet {
+                unicast;
+            }
+            export allow-loopback;
+            peer-as 65501;
+            multipath;
+            neighbor 198.51.100.29;
+            neighbor 198.51.100.31;
+        }
+        group overlay {
+            type external;
+            multihop;
+            local-address 192.0.2.24;
+            family evpn {
+                signaling;
+            }
+            peer-as 65501;
+            neighbor 192.0.2.201;
+            neighbor 192.0.2.202;
+        }
+        group dci-overlay {
+            type external;
+            multihop;
+            local-address 192.0.2.24;
+            family evpn {
+                signaling;
+            }
+            peer-as 65510;
+            neighbor 192.0.2.250 {
+                peer-as 65510;
+            }
+        }
+        group dci-underlay {
+            type external;
+            family inet {
+                unicast;
+            }
+            export allow-loopback;
+            peer-as 65510;
+            multipath;
+            neighbor 198.51.100.35;
+        }
+    }
+    lldp {
+        interface all;
+    }
+}

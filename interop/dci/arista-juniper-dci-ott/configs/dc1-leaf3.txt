@@ -11,7 +11,7 @@ transceiver qsfp default-mode 4x10G
 !
 service routing protocols model multi-agent
 !
-hostname leaf3
+hostname dc1-leaf3
 !
 spanning-tree mode rapid-pvst
 no spanning-tree vlan-id 4094

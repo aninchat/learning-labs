@@ -21,8 +21,6 @@ system l1
 !
 vlan 10
 !
-vrf instance tenant1
-!
 management api gnmi
    transport grpc default
 !
@@ -45,21 +43,14 @@ interface Ethernet3
 interface Loopback0
    ip address 192.0.2.11/32
 !
-interface Vlan10
-   vrf tenant1
-   ip attached-host route export
-   ip address virtual 172.16.10.254/24
-!
 interface Vxlan1
    vxlan source-interface Loopback0
    vxlan udp-port 4789
    vxlan vlan 10 vni 10010
-   vxlan vrf tenant1 vni 10500
-!
-ip virtual-router mac-address 00:00:5e:00:53:00
 !
 ip routing
-ip routing vrf tenant1
+!
+ip route 0.0.0.0/0 172.21.21.1
 !
 route-map allow-loopback permit 10
    match interface Loopback0
@@ -84,7 +75,7 @@ router bgp 65411
    !
    vlan 10
       rd 192.0.2.11:10
-      route-target both 10:10
+      route-target both 65500:10010
       redistribute learned
    !
    address-family evpn
@@ -93,9 +84,3 @@ router bgp 65411
    address-family ipv4
       neighbor 198.51.100.1 activate
       neighbor 198.51.100.3 activate
-   vrf tenant1
-      rd 192.0.2.11:500
-      route-target import evpn 500:500
-      route-target export evpn 500:500
-      redistribute connected
-      redistribute attached-host

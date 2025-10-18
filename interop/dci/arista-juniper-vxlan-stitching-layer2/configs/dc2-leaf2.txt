@@ -1,0 +1,138 @@
+chassis {
+    aggregated-devices {
+        ethernet {
+            device-count 1;
+        }
+    }
+}
+interfaces {
+    ge-0/0/0 {
+        unit 0 {
+            family inet {
+                address 198.51.100.16/31;
+            }
+        }
+    }
+    ge-0/0/1 {
+        unit 0 {
+            family inet {
+                address 198.51.100.18/31;
+            }
+        }
+    }
+    ge-0/0/2 {
+        ether-options {
+            802.3ad ae1;
+        }
+    }
+    ae1 {                               
+        esi {
+            auto-derive {
+                lacp-pe-system-id-and-admin-key;
+            }
+            all-active;
+        }
+        aggregated-ether-options {
+            lacp {
+                active;
+                system-id 00:00:00:00:55:66;
+            }
+        }
+        unit 0 {
+            family ethernet-switching {
+                interface-mode access;
+                vlan {
+                    members v10;
+                }
+            }
+        }
+    }
+    lo0 {
+        unit 0 {
+            family inet {
+                address 192.0.2.22/32;
+            }
+        }
+    }
+}
+policy-options {
+    policy-statement allow-loopback {
+        term 1 {
+            from {
+                protocol direct;
+                route-filter 192.0.2.0/24 orlonger;
+            }
+            then accept;
+        }
+        term deny-all {
+            then reject;
+        }
+    }
+    policy-statement ecmp {
+        then {
+            load-balance per-flow;
+        }
+    }
+}
+routing-instances {
+    macvrf-v10 {
+        instance-type mac-vrf;
+        protocols {
+            evpn {
+                encapsulation vxlan;
+                default-gateway do-not-advertise;
+                extended-vni-list 10010;
+            }
+        }
+        vtep-source-interface lo0.0;
+        service-type vlan-based;
+        interface ae1.0;
+        route-distinguisher 192.0.2.22:10;
+        vrf-target target:65501:10010;
+        vlans {
+            v10 {
+                vlan-id 10;
+                vxlan {
+                    vni 10010;
+                }
+            }
+        }
+    }
+}
+routing-options {
+    router-id 192.0.2.22;
+    autonomous-system 65422;
+    forwarding-table {
+        export ecmp;
+    }
+}
+protocols {
+    bgp {
+        group underlay {
+            type external;
+            family inet {
+                unicast;
+            }
+            export allow-loopback;
+            peer-as 65501;
+            multipath;
+            neighbor 198.51.100.17;
+            neighbor 198.51.100.19;
+        }
+        group overlay {
+            type external;
+            multihop;
+            local-address 192.0.2.22;
+            family evpn {
+                signaling;
+            }
+            peer-as 65501;
+            neighbor 192.0.2.201;
+            neighbor 192.0.2.202;
+        }
+    }
+    lldp {
+        interface all;
+    }
+}
+                       
