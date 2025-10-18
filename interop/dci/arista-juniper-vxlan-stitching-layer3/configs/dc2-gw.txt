@@ -1,0 +1,191 @@
+interfaces {
+    et-0/0/0 {
+        unit 0 {
+            family inet {
+                address 198.51.100.28/31;
+            }
+        }
+    }
+    et-0/0/1 {
+        unit 0 {
+            family inet {
+                address 198.51.100.30/31;
+            }
+        }
+    }
+    et-0/0/2 {
+        unit 0 {
+            family inet {
+                address 198.51.100.34/31;
+            }
+        }
+    }
+    lo0 {
+        unit 0 {
+            family inet {
+                address 192.0.2.24/32;
+            }
+        }
+    }
+}
+forwarding-options {
+    tunnel-termination;
+}
+policy-options {
+    mac-list deny-mac-list {
+        00:00:5e:00:53:00;
+    }
+    policy-statement allow-loopback {
+        term 1 {
+            from {
+                protocol direct;        
+                route-filter 192.0.2.0/24 orlonger;
+            }
+            then accept;
+        }
+        term deny-all {
+            then reject;
+        }
+    }
+    policy-statement dc-to-dci {
+        term deny-irb-mac {
+            from {
+                family evpn;
+                mac-filter-list deny-mac-list;
+                evpn-mac-route mac-only;
+            }
+            then reject;
+        }
+        term deny-irb-ipv4 {
+            from {
+                family evpn;
+                mac-filter-list deny-mac-list;
+                evpn-mac-route mac-ipv4;
+            }
+            then reject;
+        }
+        term deny-dc-subnet-routes {
+            from community dc-subnet-routes;
+            then reject;
+        }
+        term allow-locally-originated-only {
+            from route-distinguisher dc2-gw;
+            then accept;
+        }
+        term deny-all {
+            then reject;
+        }
+    }
+    policy-statement dci-to-dc {
+        term allow-locally-originated-only {
+            from route-distinguisher dc2-gw;
+            then accept;
+        }
+        term deny-all {
+            then reject;
+        }
+    }
+    policy-statement ecmp {
+        then {
+            load-balance per-flow;
+        }
+    }
+    policy-statement subnet-only {
+        term subnet-only {
+            from {
+                route-filter 0.0.0.0/0 prefix-length-range /24-/24;
+            }
+            then accept;
+        }
+        term deny-all {
+            then reject;                
+        }
+    }
+    community dc-subnet-routes members target:65501:500;
+    route-distinguisher dc2-gw members 192.0.2.24:*;
+}
+routing-instances {
+    tenant1 {
+        instance-type vrf;
+        protocols {
+            evpn {
+                irb-symmetric-routing {
+                    vni 10500;
+                }
+                interconnect {
+                    vrf-target target:500:500;
+                    route-distinguisher 192.0.2.24:500;
+                }
+                ip-prefix-routes {
+                    advertise direct-nexthop;
+                    encapsulation vxlan;
+                    vni 10500;
+                    export subnet-only;
+                }
+            }
+        }
+        route-distinguisher 192.0.2.24:10500;
+        vrf-target target:65501:500;
+    }
+}
+routing-options {
+    router-id 192.0.2.24;
+    autonomous-system 65424;
+    forwarding-table {
+        export ecmp;
+    }
+}
+protocols {
+    bgp {
+        group underlay {
+            type external;              
+            family inet {
+                unicast;
+            }
+            export allow-loopback;
+            peer-as 65501;
+            multipath;
+            neighbor 198.51.100.29;
+            neighbor 198.51.100.31;
+        }
+        group overlay {
+            type external;
+            multihop;
+            local-address 192.0.2.24;
+            family evpn {
+                signaling;
+            }
+            export dci-to-dc;
+            peer-as 65501;
+            neighbor 192.0.2.201;
+            neighbor 192.0.2.202;
+        }
+        group dci-overlay {
+            type external;
+            multihop;
+            local-address 192.0.2.24;
+            family evpn {
+                signaling;
+            }
+            export dc-to-dci;
+            peer-as 65510;
+            neighbor 192.0.2.250 {
+                peer-as 65510;
+            }
+            vpn-apply-export;
+        }
+        group dci-underlay {
+            type external;
+            family inet {
+                unicast;
+            }
+            export allow-loopback;
+            peer-as 65510;
+            multipath;
+            neighbor 198.51.100.35;
+        }
+    }
+    lldp {
+        interface all;
+    }
+}

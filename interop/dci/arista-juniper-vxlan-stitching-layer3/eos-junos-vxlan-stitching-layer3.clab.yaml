@@ -1,4 +1,4 @@
-name: eos-junos-vxlan-stitching-layer2
+name: eos-junos-vxlan-stitching-layer3
 prefix: ""
 mgmt:
   network: clab_mgmt

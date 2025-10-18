@@ -1,0 +1,110 @@
+interfaces {
+    ge-0/0/0 {
+        unit 0 {
+            family inet {
+                address 198.51.100.15/31;
+            }
+        }
+    }
+    ge-0/0/1 {
+        unit 0 {
+            family inet {
+                address 198.51.100.19/31;
+            }
+        }
+    }
+    ge-0/0/2 {
+        unit 0 {
+            family inet {
+                address 198.51.100.23/31;
+            }
+        }
+    }
+    ge-0/0/3 {
+        unit 0 {
+            family inet {
+                address 198.51.100.31/31;
+            }
+        }
+    }
+    lo0 {
+        unit 0 {
+            family inet {
+                address 192.0.2.202/32;
+            }
+        }
+    }
+}
+policy-options {
+    policy-statement allow-loopback {
+        term 1 {
+            from {
+                protocol direct;
+                route-filter 192.0.2.0/24 orlonger;
+            }
+            then accept;
+        }
+        term 2 {
+            from {
+                protocol bgp;
+                route-filter 192.0.2.0/24 orlonger;
+            }                           
+            then accept;
+        }
+        term deny-all {
+            then reject;
+        }
+    }
+}
+routing-options {
+    router-id 192.0.2.202;
+    autonomous-system 65501;
+}
+protocols {
+    bgp {                               
+        group underlay {
+            type external;
+            family inet {
+                unicast;
+            }
+            export allow-loopback;
+            neighbor 198.51.100.14 {
+                peer-as 65421;
+            }
+            neighbor 198.51.100.18 {
+                peer-as 65422;
+            }
+            neighbor 198.51.100.22 {
+                peer-as 65423;
+            }
+            neighbor 198.51.100.30 {
+                peer-as 65424;
+            }
+        }
+        group overlay {
+            type external;
+            multihop {
+                no-nexthop-change;
+            }
+            local-address 192.0.2.202;
+            family evpn {
+                signaling;
+            }
+            neighbor 192.0.2.21 {
+                peer-as 65421;
+            }
+            neighbor 192.0.2.22 {
+                peer-as 65422;
+            }
+            neighbor 192.0.2.23 {
+                peer-as 65423;
+            }
+            neighbor 192.0.2.24 {
+                peer-as 65424;
+            }
+        }
+    }
+    lldp {
+        interface all;
+    }
+}

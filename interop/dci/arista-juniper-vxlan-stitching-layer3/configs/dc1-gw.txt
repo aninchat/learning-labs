@@ -1,0 +1,105 @@
+no aaa root
+!
+username admin privilege 15 role network-admin secret sha512 $6$bYEHtchCpH7iZmq9$36W12ZHijsDzTQ.ibEynShPb.QAXWLAqBrnW.vEviEv2JnY.EaajJeo72kddOG/WvIeBhRnUukAzaWQkKCN1s.
+!
+management api http-commands
+   no shutdown
+!
+no service interface inactive port-id allocation disabled
+!
+transceiver qsfp default-mode 4x10G
+!
+service routing protocols model multi-agent
+!
+hostname dc1-gw
+!
+spanning-tree mode mstp
+!
+system l1
+   unsupported speed action error
+   unsupported error-correction action error
+!
+!
+vrf instance tenant1
+!
+management api gnmi
+   transport grpc default
+!
+management api netconf
+   transport ssh default
+!
+interface Ethernet1
+   mtu 9000
+   no switchport
+   ip address 198.51.100.24/31
+!
+interface Ethernet2
+   mtu 9000
+   no switchport
+   ip address 198.51.100.26/31
+!
+interface Ethernet3
+   no switchport
+   ip address 198.51.100.32/31
+!
+interface Loopback0
+   ip address 192.0.2.14/32
+!
+interface Vxlan1
+   vxlan source-interface Loopback0
+   vxlan udp-port 4789
+   vxlan vrf tenant1 vni 10500
+!
+ip virtual-router mac-address 00:00:5e:00:53:00
+!
+ip routing
+ip routing vrf tenant1
+!
+ip route 0.0.0.0/0 172.21.21.1
+!
+route-map allow-loopback permit 10
+   match interface Loopback0
+!
+router bgp 65414
+   router-id 192.0.2.14
+   no bgp default ipv4-unicast
+   maximum-paths 2
+   neighbor overlay peer group
+   neighbor overlay remote-as 65500
+   neighbor overlay update-source Loopback0
+   neighbor overlay bfd
+   neighbor overlay ebgp-multihop 2
+   neighbor overlay send-community
+   neighbor overlay-dci peer group
+   neighbor overlay-dci remote-as 65510
+   neighbor overlay-dci update-source Loopback0
+   neighbor overlay-dci ebgp-multihop 2
+   neighbor overlay-dci send-community
+   neighbor underlay peer group
+   neighbor underlay remote-as 65500
+   neighbor underlay-dci peer group
+   neighbor underlay-dci remote-as 65510
+   neighbor 192.0.2.101 peer group overlay
+   neighbor 192.0.2.102 peer group overlay
+   neighbor 192.0.2.250 peer group overlay-dci
+   neighbor 198.51.100.25 peer group underlay
+   neighbor 198.51.100.27 peer group underlay
+   neighbor 198.51.100.33 peer group underlay-dci
+   redistribute connected route-map allow-loopback
+   !
+   address-family evpn
+      neighbor overlay activate
+      neighbor overlay-dci activate
+      neighbor overlay-dci domain remote
+      neighbor default next-hop-self received-evpn-routes route-type ip-prefix inter-domain
+   !
+   address-family ipv4
+      neighbor underlay activate
+      neighbor underlay-dci activate
+   !
+   vrf tenant1
+      rd 192.0.2.14:10500
+      rd evpn domain remote 192.0.2.14:500
+      route-target import evpn 500:500
+      route-target export evpn 500:500
+      router-id 192.0.2.14

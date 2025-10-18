@@ -1,0 +1,143 @@
+no aaa root
+!
+username admin privilege 15 role network-admin secret sha512 $6$bYEHtchCpH7iZmq9$36W12ZHijsDzTQ.ibEynShPb.QAXWLAqBrnW.vEviEv2JnY.EaajJeo72kddOG/WvIeBhRnUukAzaWQkKCN1s.
+!
+management api http-commands
+   no shutdown
+!
+no service interface inactive port-id allocation disabled
+!
+transceiver qsfp default-mode 4x10G
+!
+service routing protocols model multi-agent
+!
+hostname dc1-leaf2
+!
+spanning-tree mode rapid-pvst
+no spanning-tree vlan-id 4094
+!
+system l1
+   unsupported speed action error
+   unsupported error-correction action error
+!
+vlan 10
+!
+vlan 4094
+   trunk group mlag
+!
+vrf instance tenant1
+!
+management api gnmi
+   transport grpc default
+!
+management api netconf
+   transport ssh default
+!
+interface Port-Channel1
+   switchport access vlan 10
+   mlag 1
+!
+interface Port-Channel100
+   switchport mode trunk
+   switchport trunk group mlag
+!
+interface Ethernet1
+   mtu 9000
+   no switchport
+   ip address 198.51.100.4/31
+!
+interface Ethernet2
+   mtu 9000
+   no switchport
+   ip address 198.51.100.6/31
+!
+interface Ethernet3
+   channel-group 1 mode active
+!
+interface Ethernet9
+!
+interface Ethernet10
+   channel-group 100 mode active
+!
+interface Ethernet11
+   channel-group 100 mode active
+!
+interface Loopback0
+   ip address 192.0.2.12/32
+!
+interface Loopback1
+   ip address 192.0.2.203/32
+!
+interface Vlan10
+   vrf tenant1
+   ip attached-host route export
+   ip address virtual 172.16.10.254/24
+!
+interface Vlan4094
+   no autostate
+   ip address 203.0.113.0/31
+!
+interface Vxlan1
+   vxlan source-interface Loopback1
+   vxlan virtual-router encapsulation mac-address mlag-system-id
+   vxlan udp-port 4789
+   vxlan vlan 10 vni 10010
+   vxlan vrf tenant1 vni 10500
+!
+ip virtual-router mac-address 00:00:5e:00:53:00
+!
+ip routing
+ip routing vrf tenant1
+!
+mlag configuration
+   domain-id 1
+   heartbeat-interval 2500
+   local-interface Vlan4094
+   peer-address 203.0.113.1
+   peer-link Port-Channel100
+   reload-delay 150
+!
+ip route 0.0.0.0/0 172.21.21.1
+!
+route-map allow-loopback permit 10
+   match interface Loopback0
+!
+route-map allow-loopback permit 20
+   match interface Loopback1
+!
+router bgp 65412
+   router-id 192.0.2.12
+   no bgp default ipv4-unicast
+   maximum-paths 2
+   neighbor overlay peer group
+   neighbor overlay remote-as 65500
+   neighbor overlay update-source Loopback0
+   neighbor overlay bfd
+   neighbor overlay ebgp-multihop 2
+   neighbor overlay send-community
+   neighbor underlay peer group
+   neighbor underlay remote-as 65500
+   neighbor 192.0.2.101 peer group overlay
+   neighbor 192.0.2.102 peer group overlay
+   neighbor 198.51.100.5 peer group underlay
+   neighbor 198.51.100.7 peer group underlay
+   redistribute connected route-map allow-loopback
+   !
+   vlan 10
+      rd 192.0.2.12:10
+      route-target both 65500:10010
+      redistribute learned
+   !
+   address-family evpn
+      neighbor overlay activate
+   !
+   address-family ipv4
+      neighbor 198.51.100.5 activate
+      neighbor 198.51.100.7 activate
+   !
+   vrf tenant1
+      rd 192.0.2.12:10500
+      route-target import evpn 500:500
+      route-target export evpn 500:500
+      redistribute connected
+      redistribute attached-host

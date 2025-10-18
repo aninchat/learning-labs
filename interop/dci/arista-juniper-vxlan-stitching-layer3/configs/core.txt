@@ -1,0 +1,84 @@
+interfaces {
+    ge-0/0/0 {
+        unit 0 {
+            family inet {
+                address 198.51.100.33/31;
+            }
+        }
+    }
+    ge-0/0/1 {
+        unit 0 {
+            family inet {
+                address 198.51.100.35/31;
+            }
+        }
+    }
+    lo0 {
+        unit 0 {
+            family inet {               
+                address 192.0.2.250/32;
+            }
+        }
+    }
+}
+policy-options {
+    policy-statement allow-loopback {
+        term 1 {
+            from {
+                protocol direct;
+                route-filter 192.0.2.0/24 orlonger;
+            }
+            then accept;
+        }
+        term 2 {
+            from {
+                protocol bgp;
+                route-filter 192.0.2.0/24 orlonger;
+            }
+            then accept;
+        }
+        term deny-all {
+            then reject;
+        }
+    }
+}
+routing-options {
+    router-id 192.0.2.250;
+    autonomous-system 65510;
+}
+protocols {
+    bgp {
+        group underlay {
+            type external;
+            family inet {
+                unicast;
+            }
+            export allow-loopback;
+            neighbor 198.51.100.32 {    
+                peer-as 65414;
+            }
+            neighbor 198.51.100.34 {
+                peer-as 65424;
+            }
+        }
+        group overlay {
+            type external;
+            multihop {
+                no-nexthop-change;
+            }
+            local-address 192.0.2.250;
+            family evpn {
+                signaling;
+            }
+            neighbor 192.0.2.14 {
+                peer-as 65414;
+            }
+            neighbor 192.0.2.24 {
+                peer-as 65424;
+            }
+        }
+    }
+    lldp {
+        interface all;
+    }
+}
