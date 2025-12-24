@@ -1,0 +1,140 @@
+username: admin
+password: admin@123
+insecure: true
+timeout: 10s
+
+common_junos: &common_junos
+  subscriptions:
+    - junos-intf-stats
+    - junos-bgp
+    - junos-intf-state
+
+targets:
+  leaf1:
+    <<: *common_junos
+    address: 172.21.21.11:57400
+  leaf2:
+    <<: *common_junos
+    address: 172.21.21.12:57400
+  leaf3:
+    <<: *common_junos
+    address: 172.21.21.13:57400
+  leaf4:
+    <<: *common_junos
+    address: 172.21.21.14:57400
+  leaf5:
+    <<: *common_junos
+    address: 172.21.21.15:57400
+  spine1:
+    <<: *common_junos
+    address: 172.21.21.101:57400
+  spine2:
+    <<: *common_junos
+    address: 172.21.21.102:57400
+
+subscriptions:
+  junos-intf-stats:
+    mode: stream
+    stream-mode: sample
+    sample-interval: 5s
+    paths:
+      - /interfaces/interface/state/counters
+  junos-intf-state:
+    mode: stream
+    stream-mode: sample
+    sample-interval: 5s
+    paths:
+      - /interfaces/interface/state/
+  junos-bgp:
+    mode: stream
+    stream-mode: sample
+    sample-interval: 5s
+    paths:
+      - /network-instances/network-instance/protocols/protocol/bgp/neighbors/neighbor/state
+      - /network-instances/network-instance/protocols/protocol/bgp/neighbors/neighbor/afi-safis/afi-safi/state
+
+outputs:
+  prom:
+    type: prometheus
+    listen: :9804
+    event-processors:
+      - bgp-state-to-int
+      - oper-status-to-numeric
+      - admin-status-to-numeric
+  debug_file:
+    type: file
+    filename: /tmp/gnmic-logs.json
+
+subscription-outputs:
+  junos-intf-stats:
+    - prom
+    - debug_file
+  junos-bgp:
+    - prom
+    - debug_file
+  junos-intf-state:
+    - prom
+    - debug_file
+
+processors:
+  oper-status-to-numeric:
+    event-strings:
+      paths:
+        - "^interfaces/interface.*/state$"
+      value-names:
+        - "oper-status$"
+      transforms:
+        - replace:
+            apply-on: "value"
+            old: "UP"
+            new: "1"
+        - replace:
+            apply-on: "value"
+            old: "DOWN"
+            new: "0"
+  admin-status-to-numeric:
+    event-strings:
+      paths:
+        - "^interfaces/interface.*/state$"
+      value-names:
+        - "admin-status$"
+      transforms:
+        - replace:
+            apply-on: "value"
+            old: "UP"
+            new: "1"
+        - replace:
+            apply-on: "value"
+            old: "DOWN"
+            new: "0"
+  bgp-state-to-int:
+    event-strings:
+      paths:
+        - "^network-instances/.*/protocols/.*/bgp/neighbors/.*/state$"
+      value-names:
+        - "session-state$"
+      transforms:
+        - replace:
+            apply-on: "value"
+            old: "ESTABLISHED"
+            new: "5"
+        - replace:
+            apply-on: "value"
+            old: "OPENCONFIRM"
+            new: "4"
+        - replace:
+            apply-on: "value"
+            old: "OPENSENT"
+            new: "3"
+        - replace:
+            apply-on: "value"
+            old: "ACTIVE"
+            new: "2"
+        - replace:
+            apply-on: "value"
+            old: "CONNECT"
+            new: "1"
+        - replace:
+            apply-on: "value"
+            old: "IDLE"
+            new: "0"
