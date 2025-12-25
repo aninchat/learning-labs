@@ -1,0 +1,150 @@
+name: juniper-bridged-overlay-with-telemetry-advanced
+prefix: ""
+mgmt:
+  network: clab_mgmt
+  ipv4-subnet: 172.21.21.0/24
+topology:
+  defaults:
+    kind: juniper_vjunosswitch
+  kinds:
+    juniper_vjunosswitch:
+      image: aninchat/vjunos-switch:23.4R2
+      startup-config: configs/__clabNodeName__.txt
+    linux:
+      image: ghcr.io/srl-labs/network-multitool
+      binds:
+        - base-configs:/base-configs
+  nodes:
+    spine1:
+      mgmt-ipv4: 172.21.21.101
+    spine2:
+      mgmt-ipv4: 172.21.21.102
+    leaf1:
+      mgmt-ipv4: 172.21.21.11
+    leaf2:
+      mgmt-ipv4: 172.21.21.12
+    leaf3:
+      mgmt-ipv4: 172.21.21.13
+    leaf4:
+      mgmt-ipv4: 172.21.21.14
+    leaf5:
+      mgmt-ipv4: 172.21.21.15
+    s1:
+      kind: linux
+      exec:
+        - bash base-configs/s1.sh
+    s2:
+      kind: linux
+      exec:
+        - bash base-configs/s2.sh
+    s3:
+      kind: linux
+      exec:
+        - bash base-configs/s3.sh
+    s4:
+      kind: linux
+      exec:
+        - bash base-configs/s4.sh
+    gnmic: 
+      kind: linux
+      image: ghcr.io/openconfig/gnmic:0.42.1
+      mgmt-ipv4: 172.21.21.2
+      binds:
+        - configs/gnmic/config.yaml:/gnmic-config.yaml:ro
+      cmd: subscribe --config /gnmic-config.yaml --log debug
+    kafka1:
+      kind: linux
+      image: apache/kafka:4.1.1
+      mgmt-ipv4: 172.21.21.51
+      env:
+        CLUSTER_ID: "a3f9c2e4-7b6d-4f8a-9d21-6b5c1e8a4f02"
+        KAFKA_NODE_ID: "1"
+        KAFKA_PROCESS_ROLES: "broker,controller"
+        KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka1:9093,2@kafka2:9093,3@kafka3:9093"
+
+        KAFKA_LISTENERS: "PLAINTEXT://:9092,CONTROLLER://:9093"
+        KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka1:9092"
+        KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT"
+        KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+        KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+      exec:
+        # Wait until the broker is actually listening
+        - |
+          echo "Waiting for Kafka to be ready."
+          until /opt/kafka/bin/kafka-broker-api-versions.sh \
+            --bootstrap-server kafka1:9092 >/dev/null 2>&1; do
+            sleep 2
+          done
+
+        # Create the topic
+        - |
+          /opt/kafka/bin/kafka-topics.sh \
+            --bootstrap-server kafka1:9092 \
+            --create \
+            --if-not-exists \
+            --topic gnmi.telemetry \
+            --partitions 6 \
+            --replication-factor 3
+    kafka2:
+      kind: linux
+      image: apache/kafka:4.1.1
+      mgmt-ipv4: 172.21.21.52
+      env:
+        CLUSTER_ID: "a3f9c2e4-7b6d-4f8a-9d21-6b5c1e8a4f02"
+        KAFKA_NODE_ID: "2"
+        KAFKA_PROCESS_ROLES: "broker,controller"
+        KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka1:9093,2@kafka2:9093,3@kafka3:9093"
+
+        KAFKA_LISTENERS: "PLAINTEXT://:9092,CONTROLLER://:9093"
+        KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka2:9092"
+        KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT"
+        KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+        KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+    kafka3:
+      kind: linux
+      image: apache/kafka:4.1.1
+      mgmt-ipv4: 172.21.21.53
+      env:
+        CLUSTER_ID: "a3f9c2e4-7b6d-4f8a-9d21-6b5c1e8a4f02"
+        KAFKA_NODE_ID: "3"
+        KAFKA_PROCESS_ROLES: "broker,controller"
+        KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka1:9093,2@kafka2:9093,3@kafka3:9093"
+
+        KAFKA_LISTENERS: "PLAINTEXT://:9092,CONTROLLER://:9093"
+        KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka3:9092"
+        KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT"
+        KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+        KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+    vmsingle:
+      kind: linux
+      image: victoriametrics/victoria-metrics:latest
+      mgmt-ipv4: 172.21.21.60
+      cmd: >
+        -retentionPeriod=7d
+        -storageDataPath=/storage
+        -httpListenAddr=:8428
+      ports:
+        - 8428:8428
+    gnmic_consumer:
+      kind: linux
+      image: ghcr.io/openconfig/gnmic:0.42.1
+      mgmt-ipv4: 172.21.21.3
+      binds:
+        - configs/gnmic/consumer.yaml:/gnmic-consumer.yaml:ro
+      cmd: subscribe --config /gnmic-consumer.yaml --log debug
+  links:
+    - endpoints: ["leaf1:eth1", "spine1:eth1"]
+    - endpoints: ["leaf1:eth2", "spine2:eth1"]
+    - endpoints: ["leaf2:eth1", "spine1:eth2"]
+    - endpoints: ["leaf2:eth2", "spine2:eth2"]
+    - endpoints: ["leaf3:eth1", "spine1:eth3"]
+    - endpoints: ["leaf3:eth2", "spine2:eth3"]
+    - endpoints: ["leaf4:eth1", "spine1:eth4"]
+    - endpoints: ["leaf4:eth2", "spine2:eth4"]
+    - endpoints: ["leaf5:eth1", "spine1:eth5"]
+    - endpoints: ["leaf5:eth2", "spine2:eth5"]
+    - endpoints: ["leaf1:eth3", "s1:eth1"]
+    - endpoints: ["leaf2:eth3", "s2:eth1"]
+    - endpoints: ["leaf3:eth3", "s2:eth2"]
+    - endpoints: ["leaf4:eth3", "s3:eth1"]
+    - endpoints: ["leaf5:eth3", "s4:eth1"]

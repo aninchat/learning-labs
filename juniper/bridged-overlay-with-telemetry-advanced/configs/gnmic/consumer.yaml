@@ -1,0 +1,19 @@
+timeout: 10s
+
+inputs:
+  kafka_in:
+    type: kafka
+    address: kafka1:9092,kafka2:9092,kafka3:9092
+    topics: gnmi.telemetry
+    group-id: gnmic-vm-consumer
+    format: event
+
+outputs:
+  vm_remote_write:
+    type: prometheus_write
+    url: http://vmsingle:8428/api/v1/write
+    timeout: 10s
+
+input-outputs:
+  kafka_in:
+    - vm_remote_write
