@@ -7,6 +7,6 @@ The topology is shown below. The username/password for vJunos-switch nodes is `a
 
 ![bridged-overlay-topology](/static/images/juniper-bridged-overlay.png)
 
-The overall goal of this lab is to gain familiarity with model-driven telemetry and the ecosystem around it - to that end, this lab deploys gNMIc (collector and exporter), Prometheus (storage and query) and Grafana (visualization), with the following workflow (you can login to Grafana using `admin/admin`):
+The overall goal of this lab is to gain familiarity with model-driven telemetry and the ecosystem around it - to that end, this lab deploys a gNMIc instance that acts as a collector and Kafka producer, a Kafka cluster (3 instances) that acts as a message bus and broker, another gNMIc instance that acts as a Kafka consumer, a single instance of Victoria Metrics that is the time-series database, Promtail as a log shipping agent, Loki for log aggregation and finally Grafana for visualization, with the following workflow (you can login to Grafana using `admin/admin`):
 
 ![streaming-telemetry-workflow-advanced](/static/images/streaming-telemetry-workflow-advanced.png)
