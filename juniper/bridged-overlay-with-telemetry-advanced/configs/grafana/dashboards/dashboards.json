@@ -23,7 +23,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prom"
+        "uid": "vm"
       },
       "fieldConfig": {
         "defaults": {
@@ -85,7 +85,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prom"
+        "uid": "vm"
       },
       "fieldConfig": {
         "defaults": {
@@ -140,7 +140,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prom"
+            "uid": "vm"
           },
           "editorMode": "code",
           "expr": "count (\n    network_instances_network_instance_protocols_protocol_bgp_neighbors_neighbor_state_session_state == 5\n    and on (source, neighbor_neighbor_address)\n    network_instances_network_instance_protocols_protocol_bgp_neighbors_neighbor_afi_safis_afi_safi_state_enabled{afi_safi_afi_safi_name=\"IPV4_UNICAST\"}\n)",
@@ -151,7 +151,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prom"
+            "uid": "vm"
           },
           "editorMode": "code",
           "expr": "count (\n    network_instances_network_instance_protocols_protocol_bgp_neighbors_neighbor_state_session_state != 5\n    and on (source,neighbor_neighbor_address)\n    network_instances_network_instance_protocols_protocol_bgp_neighbors_neighbor_afi_safis_afi_safi_state_enabled{afi_safi_afi_safi_name=\"IPV4_UNICAST\"}\n)",
@@ -168,7 +168,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prom"
+        "uid": "vm"
       },
       "fieldConfig": {
         "defaults": {
@@ -230,7 +230,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prom"
+            "uid": "vm"
           },
           "editorMode": "code",
           "expr": "count (\n    network_instances_network_instance_protocols_protocol_bgp_neighbors_neighbor_state_session_state != 5\n    and on (source, neighbor_neighbor_address)\n    network_instances_network_instance_protocols_protocol_bgp_neighbors_neighbor_afi_safis_afi_safi_state_enabled{afi_safi_afi_safi_name=\"L2VPN_EVPN\"}\n)",
@@ -247,7 +247,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prom"
+        "uid": "vm"
       },
       "fieldConfig": {
         "defaults": {
@@ -341,7 +341,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prom"
+        "uid": "vm"
       },
       "fieldConfig": {
         "defaults": {
@@ -431,6 +431,50 @@
       ],
       "title": "Interface tx rate",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 35
+      },
+      "id": 6,
+      "options": {
+        "dedupStrategy": "none",
+        "enableInfiniteScrolling": false,
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": false,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
+      },
+      "pluginVersion": "12.1.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "direction": "backward",
+          "editorMode": "builder",
+          "expr": "{app=\"rpd\"} |= ``",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "BGP logs",
+      "type": "logs"
     }
   ],
   "preload": false,

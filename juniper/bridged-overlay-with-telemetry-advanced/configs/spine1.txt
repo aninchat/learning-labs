@@ -11,6 +11,17 @@ system {
             }
         }
     }
+    syslog {
+        host 172.21.21.5 {
+            daemon info;
+            port 1514;
+            interactive-commands info;
+            kernel warning;
+            routing-instance mgmt_junos;
+            transport tcp;
+            structured-data;
+        }
+    }
 }
 interfaces {
     ge-0/0/0 {
@@ -85,6 +96,7 @@ protocols {
     bgp {
         group underlay {
             type external;
+            log-updown;
             family inet {
                 unicast;
             }

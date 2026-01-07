@@ -75,6 +75,7 @@ topology:
       env:
         GF_SECURITY_ADMIN_USER: admin
         GF_SECURITY_ADMIN_PASSWORD: admin
+        GF_USERS_DEFAULT_THEME: light
   links:
     - endpoints: ["leaf1:eth1", "spine1:eth1"]
     - endpoints: ["leaf1:eth2", "spine2:eth1"]

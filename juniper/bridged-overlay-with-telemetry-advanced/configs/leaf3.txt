@@ -11,6 +11,17 @@ system {
             }
         }
     }
+    syslog {
+        host 172.21.21.5 {
+            daemon info;
+            port 1514;
+            interactive-commands info;
+            kernel warning;
+            routing-instance mgmt_junos;
+            transport tcp;
+            structured-data;
+        }
+    }
 }
 chassis {
     aggregated-devices {
@@ -99,6 +110,7 @@ protocols {
     bgp {
         group underlay {
             type external;
+            log-updown;
             family inet {
                 unicast;
             }
@@ -110,6 +122,7 @@ protocols {
         }
         group overlay {
             type external;
+            log-updown;
             multihop;
             local-address 192.0.2.13;
             family evpn {

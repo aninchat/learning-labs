@@ -3,9 +3,12 @@ prefix: ""
 mgmt:
   network: clab_mgmt
   ipv4-subnet: 172.21.21.0/24
+  ipv6-subnet: fd00:dead:beef::/64
 topology:
   defaults:
     kind: juniper_vjunosswitch
+    env:
+      CLAB_MGMT_PASSTHROUGH: "true"
   kinds:
     juniper_vjunosswitch:
       image: aninchat/vjunos-switch:23.4R2
@@ -132,6 +135,39 @@ topology:
       binds:
         - configs/gnmic/consumer.yaml:/gnmic-consumer.yaml:ro
       cmd: subscribe --config /gnmic-consumer.yaml --log debug
+    grafana:
+      kind: linux
+      image: grafana/grafana:12.1.4
+      mgmt-ipv4: 172.21.21.4
+      ports:
+        - 3000:3000
+      binds:
+        - configs/grafana/datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml:ro
+        - configs/grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro
+        - configs/grafana/dashboards:/var/lib/grafana/dashboards
+      env:
+        GF_SECURITY_ADMIN_USER: admin
+        GF_SECURITY_ADMIN_PASSWORD: admin
+        GF_USERS_DEFAULT_THEME: light
+    promtail:
+      kind: linux
+      image: grafana/promtail:3.5.9
+      mgmt-ipv4: 172.21.21.5
+      cmd: -config.file=/etc/promtail/promtail.yaml
+      binds:
+        - configs/promtail/promtail.yaml:/etc/promtail/promtail.yaml:ro
+      ports:
+        - "1514:1514"
+        - "9080:9080"
+    loki:
+      kind: linux
+      mgmt-ipv4: 172.21.21.6
+      image: grafana/loki:3.5.9
+      binds:
+        - configs/loki:/etc/loki
+      cmd: --config.file=/etc/loki/loki.yaml
+      ports:
+        - 3100:3100
   links:
     - endpoints: ["leaf1:eth1", "spine1:eth1"]
     - endpoints: ["leaf1:eth2", "spine2:eth1"]
